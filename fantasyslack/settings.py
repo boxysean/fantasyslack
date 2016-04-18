@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'fantasyslack.slackbot',
+    'django_jinja',
+    'bootstrap3',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -56,6 +58,12 @@ ROOT_URLCONF = 'fantasyslack.urls'
 
 TEMPLATES = [
     {
+        "BACKEND": "django_jinja.backend.Jinja2",
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "match_extension": ".jinja",
+        }
+    }, {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [],
         'APP_DIRS': True,
@@ -151,4 +159,5 @@ STATIC_URL = '/static/'
 
 # Slack
 
-SLACK_TOKEN = os.environ.get('SLACK_TOKEN')
+SLACK_RTM_TOKEN = os.environ.get('SLACK_RTM_TOKEN')
+SLACK_API_TOKEN = os.environ.get('SLACK_API_TOKEN')

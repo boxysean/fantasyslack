@@ -2,7 +2,7 @@ import logging
 from pprint import pformat
 
 from fantasyslack import settings
-from fantasyslack.utils.mongo import MongoDAO
+from fantasyslack.slackbot.mongo import MongoDAO
 
 crontable = []
 outputs = []

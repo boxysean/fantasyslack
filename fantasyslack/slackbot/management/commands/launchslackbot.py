@@ -20,7 +20,7 @@ class Command(BaseCommand):
             logging.exception('OOPS')
 
     def handle(self, *args, **options):
-        bot = RtmBot(settings.SLACK_TOKEN, os.path.join(os.getcwd(), 'fantasyslack', 'slackbot', 'plugins'))
+        bot = RtmBot(settings.SLACK_RTM_TOKEN, os.path.join(os.getcwd(), 'fantasyslack', 'slackbot', 'plugins'))
 
         if options['daemon']:
             import daemon
