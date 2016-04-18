@@ -1,0 +1,4 @@
+*.pyc
+env.sh
+venv
+.gitbak

@@ -1,0 +1,47 @@
+{
+  "name": "fantasy-slack",
+  "version": "0.0.1",
+  "description": "Fantasy Slack",
+  "main": "''",
+  "scripts": {
+    "build": "webpack --progress --profile --colors",
+    "dev": "webpack-dev-server --progress --profile --colors --hot"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/boxysean/fantasy-slack"
+  },
+  "keywords": [
+    "React",
+    "Webpack",
+    "Babel",
+    "Starter",
+    "template"
+  ],
+  "author": "Fantasy Slack",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/boxysean/fantasy-slack/issues"
+  },
+  "homepage": "https://github.com/boxysean/fantasy-slack#readme",
+  "dependencies": {
+    "bootstrap": "^3.3.5",
+    "react": "^0.14.0",
+    "react-bootstrap": "^0.27.2",
+    "react-dom": "^0.14.0",
+    "react-router": "^1.0.0-rc3",
+    "react-router-bootstrap": "^0.19.2",
+    "sort-by": "^1.1.1"
+  },
+  "devDependencies": {
+    "babel-core": "^5.5.8",
+    "babel-loader": "^5.1.4",
+    "css-loader": "^0.18.0",
+    "file-loader": "^0.8.4",
+    "react-hot-loader": "^1.2.7",
+    "style-loader": "^0.12.4",
+    "url-loader": "^0.5.6",
+    "webpack": "^1.9.11",
+    "webpack-dev-server": "^1.9.0"
+  }
+}
