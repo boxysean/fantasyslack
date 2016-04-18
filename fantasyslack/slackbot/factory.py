@@ -15,12 +15,10 @@ class SlackMessageFactory(object):
         user_data = self.mongo_dao.get_user_by_id(message.user)
 
         if not user_data:
-            print 'DOING THIS', message
-            slack_user_data = self.slack_dao.get_user_list()
-            for slack_user_datum in slack_user_data:
-                self.mongo_dao.store_user(slack_user_datum)
-                if slack_user_datum['id'] == message.user:
-                    user_data = slack_user_datum
+            for datum in self.slack_dao.get_user_list():
+                self.mongo_dao.store_user(datum)
+                if datum['id'] == message.user:
+                    user_data = datum
 
         message.user_obj = SlackUser(user_data)
 

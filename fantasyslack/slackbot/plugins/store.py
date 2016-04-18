@@ -7,10 +7,10 @@ from fantasyslack.slackbot.mongo import MongoDAO
 crontable = []
 outputs = []
 
+blacklist_types = ['pong']
 
-def process_message(data):
 
-    logging.info(pformat(data))
-
-    mongo_dao = MongoDAO(settings.MONGO_HOST, settings.MONGO_DATABASE)
-    mongo_dao.store_message(data)
+def catch_all(data):
+    if data['type'] not in blacklist_types:
+        mongo_dao = MongoDAO(settings.MONGO_HOST, settings.MONGO_DATABASE)
+        mongo_dao.store_message(data)
