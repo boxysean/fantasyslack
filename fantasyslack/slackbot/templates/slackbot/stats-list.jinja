@@ -1,0 +1,30 @@
+{% extends 'slackbot/layout.jinja' %}
+
+{% block body %}
+    <div class="container slackbot-main">
+
+      <div>
+        <h1>Stats</h1>
+        <p class="lead">Computed stats on the dataset</p>
+      </div>
+
+      <div class="row">
+        <table class="table">
+          <tr>
+            <th></th>
+          {% for stat in stats.keys() %}
+            <th>{{ stat }}</th>
+          {% endfor %}
+          </tr>
+          {% for user in users %}
+          <tr>
+            <th>{{ user.real_name }}</th>
+            {% for stat in stats.keys() %}
+            <td>{{ stats[stat][user.real_name] }}</td>
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+    </div><!-- /.container -->
+{% endblock %}

@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'fantasyslack.slackbot',
     'django_jinja',
+    'django_extensions'
 ]
 
 MIDDLEWARE_CLASSES = [

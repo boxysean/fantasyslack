@@ -28,3 +28,7 @@ class MongoDAO(object):
     def store_user(self, user_data):
         collection = self.database['slackusers']
         return collection.replace_one({'id': user_data['id']}, user_data, upsert=True)
+
+    def get_users(self, filter_dict={}):
+        collection = self.database['slackusers']
+        return collection.find(filter_dict)

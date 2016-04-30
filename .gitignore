@@ -3,3 +3,4 @@ env.sh
 venv
 .gitbak
 db.sqlite3
+dump/

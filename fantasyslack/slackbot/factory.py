@@ -3,24 +3,32 @@ from fantasyslack import settings
 from fantasyslack.slackbot.models import SlackMessage, SlackUser
 
 
-class SlackMessageFactory(object):
+class SlackFactory(object):
     def __init__(self, mongo_dao, slack_dao):
         self.mongo_dao = mongo_dao
         self.slack_dao = slack_dao
+
+
+class SlackMessageFactory(SlackFactory):
+    def __init__(self, mongo_dao, slack_dao):
+        super(SlackMessageFactory, self).__init__(mongo_dao, slack_dao)
 
     def _attach_user(self, message):
         if not message.user:
             return
 
         user_data = self.mongo_dao.get_user_by_id(message.user)
-
+        
         if not user_data:
             for datum in self.slack_dao.get_user_list():
                 self.mongo_dao.store_user(datum)
-                if datum['id'] == message.user:
+                if message.subtype != 'message_changed' and datum['id'] == message.user:
+                    user_data = datum
+                elif message.subtype == 'message_changed' and datum['message']['id'] == message.user:
                     user_data = datum
 
-        message.user_obj = SlackUser(user_data)
+        if user_data:
+            message.user_obj = SlackUser(user_data)
 
     def get(self, message_id=None, filter_dict={}):
         if message_id:
@@ -38,3 +46,16 @@ class SlackMessageFactory(object):
                 slack_messages.append(slack_message)
 
             return slack_messages
+
+
+class SlackUserFactory(SlackFactory):
+    def __init__(self, mongo_dao, slack_dao):
+        super(SlackUserFactory, self).__init__(mongo_dao, slack_dao)
+
+    def create_all(self):
+        slack_users = []
+
+        for user_datum in self.mongo_dao.get_users():
+            slack_users.append(SlackUser(user_datum))
+
+        return slack_users
