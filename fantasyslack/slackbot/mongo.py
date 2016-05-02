@@ -25,6 +25,10 @@ class MongoDAO(object):
         collection = self.database['slackusers']
         return collection.find_one({'id': user_id})
 
+    def get_user_by_name(self, name):
+        collection = self.database['slackusers']
+        return collection.find_one({'name': name})
+
     def store_user(self, user_data):
         collection = self.database['slackusers']
         return collection.replace_one({'id': user_data['id']}, user_data, upsert=True)

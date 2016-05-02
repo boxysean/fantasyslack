@@ -1,5 +1,3 @@
-from fantasyslack import settings
-
 from fantasyslack.slackbot.models import SlackMessage, SlackUser
 
 
@@ -59,3 +57,6 @@ class SlackUserFactory(SlackFactory):
             slack_users.append(SlackUser(user_datum))
 
         return slack_users
+
+    def create(self, user_id):
+        return SlackUser(self.mongo_dao.get_user_by_id(user_id))
