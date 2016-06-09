@@ -7,6 +7,7 @@ import { Router, Route } from 'react-router';
 import { FSNav } from './components/navigation.js';
 import { FSOverviewPage } from './pages/overview/';
 import { FSStandingsPage } from './pages/standings';
+import { FSGamePage } from './pages/game/';
 
 var pages = [
     { name: 'Overview', slug: 'overview', app: FSOverviewPage },
@@ -18,16 +19,16 @@ var pages = [
     { name: 'Rules/Help', slug: 'help', app: undefined }
 ];
 
-export var App = React.createClass({
-	render: function() {
+class App extends React.Component {
+    render() {
         return (
             <div>
                 <FSNav pages={pages} />
                 {this.props.children}
             </div>
         );
-	}
-});
+    }
+}
 
 var router = (
     <Router>
@@ -35,9 +36,9 @@ var router = (
             {pages.filter((page) => page.app !== undefined).map((page) =>
                 <Route path={page.slug} component={page.app} />
             )}
+            <Route path='game' component={FSGamePage} />
         </Route>
     </Router>
 );
-
 
 ReactDOM.render(router, document.querySelector("#myApp"));
