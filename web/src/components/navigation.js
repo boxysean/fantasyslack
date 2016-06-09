@@ -25,7 +25,9 @@ export var FSNav = React.createClass({
     render: function() {
         return (
             <Navbar>
-                <NavBrand>Fantasy Slack</NavBrand>
+                <Navbar.Header>
+                    <Navbar.Brand>Fantasy Slack</Navbar.Brand>
+                </Navbar.Header>
                 <Nav activeKey={this.state.selectedItem.slug} onSelect={this.handleSelect}>
                     {this.props.pages.map((page) => {
                         if (page.app !== undefined) {
@@ -42,3 +44,4 @@ export var FSNav = React.createClass({
         )
     }
 });
+
