@@ -1,15 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { OverviewTable } from './table';
+import { StandingsTable } from './table';
 import { TeamStore } from '../../stores/team';
 
-export var FSOverviewPage = React.createClass({
+export var FSStandingsPage = React.createClass({
     render: function() {
         return (
             <div>
-                <h1>Overview Page</h1>
-                <OverviewTable teams={TeamStore.DATA.teams} />
+                <h1>Standings Page</h1>
+                <StandingsTable teams={TeamStore.DATA.teams} />
             </div>
         );
     }

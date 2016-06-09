@@ -5,7 +5,7 @@ import { Table } from 'react-bootstrap';
 
 var sortBy = require('sort-by');
 
-export var OverviewTable = React.createClass({
+export var StandingsTable = React.createClass({
     propTypes: {
         teams: React.PropTypes.arrayOf(React.PropTypes.object)
     },

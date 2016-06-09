@@ -5,12 +5,11 @@ import ReactDOM from 'react-dom';
 import { Router, Route } from 'react-router';
 
 import { FSNav } from './components/navigation.js';
-import { FSOverviewPage } from './pages/overview/';
-import { FSStandingsPage } from './pages/standings';
+import { FSStandingsPage } from './pages/standings/';
 import { FSGamePage } from './pages/game/';
 
 var pages = [
-    { name: 'Overview', slug: 'overview', app: FSOverviewPage },
+    { name: 'Game', slug: 'game', app: FSGamePage },
     { name: 'Standings', slug: 'standings', app: FSStandingsPage },
     { name: 'Your Team', slug: 'your-team', app: undefined },
     { name: 'All Emailers', slug: 'all-emailers', app: undefined },
@@ -36,7 +35,6 @@ var router = (
             {pages.filter((page) => page.app !== undefined).map((page) =>
                 <Route path={page.slug} component={page.app} />
             )}
-            <Route path='game' component={FSGamePage} />
         </Route>
     </Router>
 );
