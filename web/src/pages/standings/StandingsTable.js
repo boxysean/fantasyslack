@@ -1,35 +1,34 @@
+import PropTypes from 'prop-types';
 import React from 'react';
-import ReactDOM from 'react-dom';
 
 import { Table } from 'react-bootstrap';
 
 var sortBy = require('sort-by');
 
-export var StandingsTable = React.createClass({
-    propTypes: {
-        teams: React.PropTypes.arrayOf(React.PropTypes.object)
-    },
-
-    getInitialState() {
-        return {
+export class StandingsTable extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
             activeTableColumnIndex: 1
-        }
-    },
+        };
 
-    columnHeaders: [
-        {
-            title: 'Rank',
-            key: 'rank'
-        }, {
-            title: 'Name',
-            key: 'name',
-        }, {
-            title: 'Points',
-            key: 'points'
-        }
-    ],
+        this.columnHeaders = [
+            {
+                title: 'Rank',
+                key: 'rank'
+            },
+            {
+                title: 'Name',
+                key: 'name',
+            },
+            {
+                title: 'Points',
+                key: 'points'
+            },
+        ];
+    }
 
-    tableColumnHeaderClickHandler: function(index) {
+    tableColumnHeaderClickHandler(index) {
         var newIndex;
 
         if (index+1 === this.state.activeTableColumnIndex) {
@@ -41,9 +40,9 @@ export var StandingsTable = React.createClass({
         this.setState({
             activeTableColumnIndex: newIndex
         });
-    },
+    }
 
-    render: function() {
+    render() {
         var sortModifier = this.state.activeTableColumnIndex < 0 ? '-' : '';
         var activeIndex = Math.abs(this.state.activeTableColumnIndex)-1;
 
@@ -71,4 +70,12 @@ export var StandingsTable = React.createClass({
             </Table>
         );
     }
-});
+}
+
+StandingsTable.propTypes = {
+    teams: PropTypes.arrayOf(PropTypes.object)
+};
+
+StandingsTable.columnHeaders = [
+    
+];

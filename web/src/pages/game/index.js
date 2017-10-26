@@ -1,28 +1,34 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 
-import { Form, FormGroup, ControlLabel, FormControl, HelpBlock, InputGroup, Button, Checkbox, Col, Jumbotron } from 'react-bootstrap';
-import DateTimeField from 'react-bootstrap-datetimepicker';
+import { Form, FormGroup, ControlLabel, FormControl, HelpBlock, Button, Checkbox, Col, Jumbotron } from 'react-bootstrap';
 
-var LeagueTitle = React.createClass({
-    getInitialState: function() {
+class LeagueTitle extends React.Component {
+    render() {
+        return (
+            <h1>League Title</h1>
+        );
+    }
+}
+
+class Contacts extends React.Component {
+    getInitialState() {
         return {
             value: ''
         };
-    },
+    }
 
-    getValidationState: function() {
+    getValidationState() {
         const length = this.state.value.length;
         if (length > 10) return 'success';
         else if (length > 5) return 'warning';
         else if (length > 0) return 'error';
-    },
+    }
 
-    handleChange: function(e) {
+    handleChange(e) {
         this.setState({ value: e.target.value });
-    },
+    }
 
-    render: function() {
+    render() {
         return (
             <FormGroup controlId="formLeagueTitle" validationState={this.getValidationState()}>
                 <Col componentClass={ControlLabel} sm={2}>League Title</Col>
@@ -38,27 +44,28 @@ var LeagueTitle = React.createClass({
             </FormGroup>
         );
     }
-});
+}
 
-var SlackChannel = React.createClass({
-    getInitialState: function() {
-        return {
+class SlackChannel extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
             value: ''
         };
-    },
+    }
 
-    getValidationState: function() {
+    getValidationState() {
         const length = this.state.value.length;
         if (length > 10) return 'success';
         else if (length > 5) return 'warning';
         else if (length > 0) return 'error';
-    },
+    }
 
-    handleChange: function(e) {
+    handleChange(e) {
         this.setState({ value: e.target.value });
-    },
+    }
 
-    render: function() {
+    render() {
         return (
             <FormGroup controlId="formSlackChannel" validationState={this.getValidationState()}>
                 <Col componentClass={ControlLabel} sm={2}>Slack Channel</Col>
@@ -74,27 +81,28 @@ var SlackChannel = React.createClass({
             </FormGroup>
         );
     }
-});
+}
 
-var Players = React.createClass({
-    getInitialState: function() {
-        return {
+class Players extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
             value: ''
         };
-    },
+    }
 
-    getValidationState: function() {
+    getValidationState() {
         const length = this.state.value.length;
         if (length > 10) return 'success';
         else if (length > 5) return 'warning';
         else if (length > 0) return 'error';
-    },
+    }
 
-    handleChange: function(e) {
+    handleChange(e) {
         this.setState({ value: e.target.value });
-    },
+    }
 
-    render: function() {
+    render() {
         return (
             <FormGroup controlId="formPlayers" validationState={this.getValidationState()}>
                 <Col componentClass={ControlLabel} sm={2}>Players</Col>
@@ -110,58 +118,59 @@ var Players = React.createClass({
             </FormGroup>
         );
     }
-});
+}
 
-var EndDate = React.createClass({
-    getInitialState: function() {
-        return {
+class EndDate extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
             value: ''
         };
-    },
+    }
 
-    getValidationState: function() {
+    getValidationState() {
         const length = this.state.value.length;
         if (length > 10) return 'success';
         else if (length > 5) return 'warning';
         else if (length > 0) return 'error';
-    },
+    }
 
-    handleChange: function(e) {
+    handleChange(e) {
         this.setState({ value: e.target.value });
-    },
+    }
 
-    render: function() {
+    render() {
         return (
             <FormGroup controlId="formEndDate" validationState={this.getValidationState()}>
                 <Col componentClass={ControlLabel} sm={2}>End Date</Col>
                 <Col sm={10}>
-                    <DateTimeField />
                     <HelpBlock>Exactly when this league will end</HelpBlock>
                 </Col>
             </FormGroup>
         );
     }
-});
+}
 
-var NumberOfTeamMembers = React.createClass({
-    getInitialState: function() {
-        return {
+class NumberOfTeamMembers extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
             value: ''
         };
-    },
+    }
 
-    getValidationState: function() {
+    getValidationState() {
         const length = this.state.value.length;
         if (length > 10) return 'success';
         else if (length > 5) return 'warning';
         else if (length > 0) return 'error';
-    },
+    }
 
-    handleChange: function(e) {
+    handleChange(e) {
         this.setState({ value: e.target.value });
-    },
+    }
 
-    render: function() {
+    render() {
         return (
             <FormGroup controlId="formPlayers" validationState={this.getValidationState()}>
                 <Col componentClass={ControlLabel} sm={2}>Number of Team Members</Col>
@@ -177,27 +186,28 @@ var NumberOfTeamMembers = React.createClass({
             </FormGroup>
         );
     }
-});
+}
 
-var ScoringCategories = React.createClass({
-    getInitialState: function() {
-        return {
+class ScoringCategories extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
             value: ''
         };
-    },
+    }
 
-    getValidationState: function() {
+    getValidationState() {
         const length = this.state.value.length;
         if (length > 10) return 'success';
         else if (length > 5) return 'warning';
         else if (length > 0) return 'error';
-    },
+    }
 
-    handleChange: function(e) {
+    handleChange(e) {
         this.setState({ value: e.target.value });
-    },
+    }
 
-    render: function() {
+    render() {
         return (
             <FormGroup controlId="formScoringCategories" validationState={this.getValidationState()}>
                 <Col componentClass={ControlLabel} sm={2}>Scoring Categories</Col>
@@ -213,10 +223,10 @@ var ScoringCategories = React.createClass({
             </FormGroup>
         );
     }
-});
+}
 
-export var FSGamePage = React.createClass({
-    render: function() {
+export class FSGamePage extends React.Component {
+    render() {
         return (
             <div>
                 <Jumbotron>
@@ -239,5 +249,4 @@ export var FSGamePage = React.createClass({
             </div>
         );
     }
-});
-
+}

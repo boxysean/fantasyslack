@@ -1,11 +1,10 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 
-import { StandingsTable } from './table';
-import { TeamStore } from '../../stores/team';
+import { StandingsTable } from './StandingsTable';
+import { TeamStore } from './team';
 
-export var FSStandingsPage = React.createClass({
-    render: function() {
+export class FSStandingsPage extends React.Component {
+    render() {
         return (
             <div>
                 <h1>Standings Page</h1>
@@ -13,4 +12,4 @@ export var FSStandingsPage = React.createClass({
             </div>
         );
     }
-});
+}

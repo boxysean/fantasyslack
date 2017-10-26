@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
@@ -5,24 +6,21 @@ import { Nav, Navbar, NavBrand, NavItem } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
 
-export var FSNav = React.createClass({
-    propTypes: {
-        pages: React.PropTypes.arrayOf(React.PropTypes.object)
-    },
-
-    getInitialState: function() {
-        return {
+export class FSNav extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
             selectedItem: this.props.pages[0]
-        }
-    },
+        };
+    }
 
-    handleSelect: function(selectedKey) {
+    handleSelect(selectedKey) {
         this.setState({
             selectedItem: this.props.pages.filter((page) => page.slug == selectedKey)[0]
         });
-    },
+    }
 
-    render: function() {
+    render() {
         return (
             <Navbar>
                 <Navbar.Header>
@@ -43,5 +41,8 @@ export var FSNav = React.createClass({
             </Navbar>
         )
     }
-});
+}
 
+FSNav.propTypes = {
+    pages: PropTypes.arrayOf(PropTypes.object)
+};
