@@ -15,9 +15,9 @@ jobs:
 
       - run:
           command: |
+            sudo apt-get -y -qq update
+            sudo apt-get -y -qq install awscli
             make deps
-            apt-get -y -qq update
-            apt-get -y -qq install awscli
           working_directory: web
 
       - save_cache:
