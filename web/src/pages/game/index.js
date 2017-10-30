@@ -1,3 +1,5 @@
+/* eslint no-unused-vars: "off" */
+
 import React from 'react';
 
 import { Form, FormGroup, ControlLabel, FormControl, HelpBlock, Button, Checkbox, Col, Jumbotron } from 'react-bootstrap';
