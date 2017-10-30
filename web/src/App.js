@@ -16,7 +16,7 @@ import { FSStandingsPage } from './pages/standings';
 class App extends Component {
   render() {
     return (
-      <Router>
+      <Router basename="/fantasyslack">
         <div>
           <ul>
             <li><Link to="/">Home</Link></li>
