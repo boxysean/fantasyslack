@@ -59,6 +59,7 @@ jobs:
       - deploy:
           command: |
             source venv/bin/activate
+            aws sts get-caller-identity
             make deploy
           working_directory: server
 
