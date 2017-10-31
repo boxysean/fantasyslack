@@ -24,11 +24,14 @@ jobs:
 
       - save_cache:
           paths:
-            - web/node_modules
+            - "web/node_modules"
           key: v1-dependencies-{{ .Branch }}-{{ checksum "web/package.json" }}
 
       - deploy:
-          command: make deploy
+          command: |
+            aws configure list
+            aws sts get-caller-identity
+            make deploy
           working_directory: web
 
   deploy_server:
@@ -53,15 +56,14 @@ jobs:
 
       - save_cache:
           paths:
-            - server/venv
+            - "server/venv"
           key: v1-dependencies-{{ .Branch }}-{{ checksum "server/requirements.txt" }}
 
       - deploy:
           command: |
             source venv/bin/activate
             aws sts get-caller-identity
-            cat ~/.aws/config
-            cat ~/.aws/credentials
+            aws configure list
             make deploy
           working_directory: server
 
