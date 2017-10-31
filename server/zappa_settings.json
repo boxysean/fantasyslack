@@ -5,6 +5,7 @@
         "profile_name": "default",
         "project_name": "server",
         "runtime": "python3.6",
-        "s3_bucket": "fantasyslack-zappa"
+        "s3_bucket": "fantasyslack-zappa",
+        "assume_policy": "zappa_assume_policy.json"
     }
 }

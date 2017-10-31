@@ -1,0 +1,21 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "",
+      "Effect": "Allow",
+      "Principal": {
+        "Service": [
+          "events.amazonaws.com",
+          "apigateway.amazonaws.com",
+          "lambda.amazonaws.com"
+        ],
+        "AWS": [
+          "arn:aws:iam::858316752957:user/boxysean",
+          "arn:aws:iam::858316752957:user/circleci"
+        ]
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}

@@ -45,6 +45,9 @@ jobs:
           - v2-dependencies-
 
       - run:
+          command: sudo apt-get -y -qq install jq
+
+      - run:
           command: |
             test -d venv || python -m venv venv
             source venv/bin/activate
