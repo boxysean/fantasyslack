@@ -28,10 +28,7 @@ jobs:
           key: v1-dependencies-{{ .Branch }}-{{ checksum "web/package.json" }}
 
       - deploy:
-          command: |
-            aws configure list
-            aws sts get-caller-identity
-            make deploy
+          command: make deploy
           working_directory: web
 
   deploy_server:
@@ -62,9 +59,7 @@ jobs:
       - deploy:
           command: |
             source venv/bin/activate
-            aws sts get-caller-identity
-            aws configure list
-            make deploy
+            AWS_DEFAULT_REGION=us-east-1 make deploy
           working_directory: server
 
 workflows:
