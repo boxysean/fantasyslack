@@ -33,7 +33,7 @@ jobs:
 
   deploy_server:
     docker:
-      - image: circleci/python:3.6.3
+      - image: circleci/python:3.6.3-stretch
 
     steps:
       - checkout
