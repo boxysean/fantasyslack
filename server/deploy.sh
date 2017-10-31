@@ -1,4 +1,6 @@
 #!/bin/bash
+set -euo pipefail
+IFS=$'\n\t'
 
 temp_role=$(aws sts assume-role \
   --role-arn arn:aws:iam::858316752957:role/server-dev-ZappaLambdaExecutionRole \
