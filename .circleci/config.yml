@@ -53,7 +53,7 @@ jobs:
 
       - save_cache:
           paths:
-            - venv
+            - server/venv
           key: v1-dependencies-{{ .Branch }}-{{ checksum "server/requirements.txt" }}
 
       - deploy:
