@@ -45,7 +45,10 @@ jobs:
           - v1-dependencies-
 
       - run:
-          command: make deps
+          command: |
+            test -d venv || python -m venv venv
+            source venv/bin/activate
+            make deps
           working_directory: server
 
       - save_cache:
