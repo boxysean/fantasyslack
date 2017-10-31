@@ -6,7 +6,6 @@
         "project_name": "fantasyslack",
         "runtime": "python3.6",
         "s3_bucket": "fantasyslack-zappa",
-        "manage_roles": false,
-        "role_name": "fantasyslack-dev-ZappaLambdaExecutionRole"
+        "manage_roles": true
     }
 }
