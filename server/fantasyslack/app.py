@@ -4,7 +4,7 @@ app = Flask(__name__)
 
 @app.route('/')  
 def index():  
-    return "Hello, world!", 200
+    return "Hello, world (and cats)!", 200
 
 # We only need this for local development.  
 if __name__ == '__main__':  
