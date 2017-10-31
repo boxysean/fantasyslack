@@ -1,4 +1,4 @@
-.PHONY: deps deploy update
+.PHONY: deps deploy
 
 deps:
 	pip install -r requirements.txt

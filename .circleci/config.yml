@@ -66,7 +66,7 @@ jobs:
             mkdir -p ~/.aws
             echo -e "[default]\noutput = json\nregion = us-east-1" > ~/.aws/config
             echo -e "[default]\naws_access_key_id = XXXXXXXXXXXXXXXXXXXX\naws_secret_access_key = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" > ~/.aws/credentials
-            make update
+            make deploy
           working_directory: server
 
 workflows:
