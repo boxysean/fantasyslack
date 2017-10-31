@@ -57,7 +57,9 @@ jobs:
           key: v1-dependencies-{{ .Branch }}-{{ checksum "server/requirements.txt" }}
 
       - deploy:
-          command: make deploy
+          command: |
+            source venv/bin/activate
+            make deploy
           working_directory: server
 
 workflows:
