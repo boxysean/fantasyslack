@@ -59,7 +59,8 @@ jobs:
       - deploy:
           command: |
             source venv/bin/activate
-            AWS_DEFAULT_REGION=us-east-1 make update
+            export AWS_DEFAULT_REGION=us-east-1
+            make update
           working_directory: server
 
 workflows:

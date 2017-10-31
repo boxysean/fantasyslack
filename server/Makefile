@@ -8,4 +8,4 @@ deploy:
 
 update:
 	ls
-	deploy.sh
+	./deploy.sh
