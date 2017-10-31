@@ -8,3 +8,5 @@ bundle.js
 node_modules
 npm-debug.log
 web/build
+assume-role-output.txt
+server/*zip
