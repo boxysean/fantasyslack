@@ -60,6 +60,8 @@ jobs:
           command: |
             source venv/bin/activate
             aws sts get-caller-identity
+            cat ~/.aws/config
+            cat ~/.aws/credentials
             make deploy
           working_directory: server
 
