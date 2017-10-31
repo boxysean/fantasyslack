@@ -7,4 +7,5 @@ deploy:
 	zappa deploy dev
 
 update:
+	ls
 	deploy.sh

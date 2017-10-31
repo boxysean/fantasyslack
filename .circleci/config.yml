@@ -40,9 +40,9 @@ jobs:
 
       - restore_cache:
           keys:
-          - v1-dependencies-{{ .Branch }}-{{ checksum "server/requirements.txt" }}
+          - v2-dependencies-{{ .Branch }}-{{ checksum "server/requirements.txt" }}
           # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
+          - v2-dependencies-
 
       - run:
           command: |
@@ -54,7 +54,7 @@ jobs:
       - save_cache:
           paths:
             - server/venv
-          key: v1-dependencies-{{ .Branch }}-{{ checksum "server/requirements.txt" }}
+          key: v2-dependencies-{{ .Branch }}-{{ checksum "server/requirements.txt" }}
 
       - deploy:
           command: |
