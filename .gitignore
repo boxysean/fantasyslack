@@ -11,3 +11,4 @@ web/build
 assume-role-output.txt
 server/*zip
 zappa_settings.json.tmp
+server/fantasyslack/secrets.py
