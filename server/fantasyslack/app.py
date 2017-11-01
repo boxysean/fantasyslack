@@ -31,7 +31,7 @@ def slack_event():
             return RESPONSE_FORBIDDEN, 403
 
         return jsonify({
-            'challenge': request.json['challenge'], 
+            'challenge': request.json['challenge'],
         })
     else:
         if request.json['token'] != config['slack_token']:
@@ -56,14 +56,17 @@ def get_config():
             Bucket='fantasyslack-conf',
             Key='secrets.json',
         )
-        remote_secrets = json.load(response['Body'].read())
-    except:
+
+        remote_secrets = json.load(response['Body'])
+    except Exception as e:
+        print("Could not load remote secrets:", e)
         remote_secrets = {}
 
     try:
         with open('secrets.json') as secrets_file:
             local_secrets = json.load(secrets_file)
-    except:
+    except Exception as e:
+        print("Could not load local secrets:", e)
         local_secrets = {}
 
     return collections.ChainMap(os.environ, remote_secrets, local_secrets)
