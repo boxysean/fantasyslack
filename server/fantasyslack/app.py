@@ -5,6 +5,7 @@ import os
 import pprint
 
 from flask import Flask, request, jsonify
+import fantasyslack.models
 
 
 app = Flask(__name__)
@@ -37,14 +38,10 @@ def slack_event():
         if request.json['token'] != config['slack_token']:
             return RESPONSE_FORBIDDEN, 403
 
-        dynamodb_resource = boto3.resource('dynamodb')
-        table = dynamodb_resource.Table('fantasyslack-events')
-        response = table.put_item(
-            Item={
-                'message_hash': str(hash(pprint.pformat(request.json.items()))),
-                'from_slack': request.json,
-            }
-        )
+        del request.json['token']
+
+        event = fantasyslack.models.EventModel(from_slack=request.json)
+        event.save()
 
         return RESPONSE_OK
 
