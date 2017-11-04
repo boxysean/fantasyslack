@@ -1,5 +1,6 @@
 import argparse
 
+import fantasyslack.fixtures
 import fantasyslack.models
 
 
@@ -26,10 +27,17 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Fantasy Slack CLI')
     subparser = parser.add_subparsers()
 
-    create_table_parser = subparser.add_parser('create_table')
-    create_table_parser.add_argument('--delete', action='store_true', default=False)
-    create_table_parser.add_argument('--do-not-create', action='store_true', default=False)
-    create_table_parser.set_defaults(func=create_tables)
+    create_tables_parser = subparser.add_parser('create_tables')
+    create_tables_parser.add_argument('--delete', action='store_true', default=False)
+    create_tables_parser.add_argument('--do-not-create', action='store_true', default=False)
+    create_tables_parser.set_defaults(func=create_tables)
+
+    create_fixtures_parser = subparser.add_parser('create_fixtures')
+    create_fixtures_parser.set_defaults(func=fantasyslack.fixtures.create_fixtures)
 
     args = parser.parse_args()
-    args.func(args)
+
+    if 'func' in args:
+        args.func(args)
+    else:
+        parser.print_usage()

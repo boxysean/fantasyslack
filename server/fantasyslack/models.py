@@ -12,7 +12,7 @@ class BaseMeta(object):
 
 
 class BaseModel(Model):
-    id = UnicodeAttribute(hash_key=True, default=str(uuid.uuid4()))
+    id = UnicodeAttribute(hash_key=True, default=lambda: str(uuid.uuid4()))
     created = UTCDateTimeAttribute(range_key=True, default=datetime.datetime.utcnow())
     updated = UTCDateTimeAttribute(default=datetime.datetime.utcnow())
 
@@ -80,8 +80,8 @@ class GameModel(BaseModel):
     name = UnicodeAttribute()
     team_ids = ListAttribute()  # probably doesn't change
     category_ids = ListAttribute()  # must not change
-    started = UTCDateTimeAttribute()
-    ended = UTCDateTimeAttribute()
+    start = UTCDateTimeAttribute()
+    end = UTCDateTimeAttribute()
 
 
 class TeamModel(BaseModel):
