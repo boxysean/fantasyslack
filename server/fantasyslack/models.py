@@ -5,6 +5,17 @@ from pynamodb.attributes import UTCDateTimeAttribute, ListAttribute, MapAttribut
 from pynamodb.models import Model
 
 
+_cache = {}
+
+def _from_cache(model, id):
+    if id in _cache:
+        return _cache[id]
+    else:
+        res = list(model.query(id))[0]
+        _cache[id] = res
+        return res
+
+
 class BaseMeta(object):
     region = 'us-east-1'
     read_capacity_units = 1
@@ -116,6 +127,7 @@ class PlayerModel(BaseModel):
 
     slack_team_id = UnicodeAttribute()
     slack_user_id = UnicodeAttribute()
+    name = UnicodeAttribute()
 
 
 class PlayerPointModel(BaseModel):
@@ -123,8 +135,16 @@ class PlayerPointModel(BaseModel):
         table_name = 'fantasyslack-points'
 
     player_id = UnicodeAttribute()
-    category = UnicodeAttribute()
+    category_id = UnicodeAttribute()
     related_event_ids = ListAttribute()
+
+    @property
+    def player(self):
+        return _from_cache(PlayerModel, self.player_id)
+
+    @property
+    def category(self):
+        return _from_cache(CategoryModel, self.category_id)
 
 
 class CategoryModel(BaseModel):
@@ -132,3 +152,13 @@ class CategoryModel(BaseModel):
         table_name = 'fantasyslack-categories'
 
     name = UnicodeAttribute()
+
+
+class DraftSelectionModel(BaseModel):
+    class Meta(BaseMeta):
+        table_name = 'fantasyslack-draftselection'
+
+    player_id = UnicodeAttribute()
+    team_id = UnicodeAttribute()
+    game_id = UnicodeAttribute()
+    order = NumberAttribute()

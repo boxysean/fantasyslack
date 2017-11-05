@@ -10,7 +10,7 @@ import './App.css';
 
 import { FSGamePage } from './pages/game';
 import { FSStandingsPage } from './pages/standings';
-// import { FSNav } from './components/navigation';
+import { FSPlayersPage } from './pages/players';
 
 class App extends Component {
   render() {
@@ -21,6 +21,7 @@ class App extends Component {
             <li><Link to="/">Home</Link></li>
             <li><Link to="/game">Game</Link></li>
             <li><Link to="/standings">Standings</Link></li>
+            <li><Link to="/players">Players</Link></li>
           </ul>
 
           <hr/>
@@ -28,6 +29,7 @@ class App extends Component {
           <Route exact path="/" component={Home}/>
           <Route path="/game" component={FSGamePage}/>
           <Route path="/standings" component={FSStandingsPage}/>
+          <Route path="/players" component={FSPlayersPage}/>
         </div>
       </Router>
     );

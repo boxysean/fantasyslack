@@ -1,6 +1,8 @@
 import boto3
 import collections
+import datetime
 import json
+import operator
 import os
 import pprint
 
@@ -44,6 +46,30 @@ def slack_event():
         event.save()
 
         return RESPONSE_OK
+
+
+@app.route('/api/v1/players', methods=['GET'])
+def players():
+    start = datetime.datetime(2017, 10, 1)
+    end = datetime.datetime(2017, 11, 1)
+
+    players = collections.defaultdict(lambda: collections.defaultdict(int))
+
+    for player_point in fantasyslack.models.PlayerPointModel.scan(fantasyslack.models.PlayerPointModel.created.between(start, end)):
+        players[player_point.player.name][player_point.category.name] += 1
+
+    table = [
+        {
+            'name': player_name,
+            'points': sum(entry.values()),
+        }
+        for player_name, entry in players.items()
+    ]
+
+    for idx, row in enumerate(sorted(table, key=operator.itemgetter('points'), reverse=True)):
+        row['rank'] = idx+1
+
+    return jsonify(table)
 
 
 def get_config():
