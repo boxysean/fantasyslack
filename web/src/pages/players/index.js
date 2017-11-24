@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { StandingsTable } from './StandingsTable';
-import { TeamStore } from './team';
+// import { TeamStore } from './team';
 
 export class FSPlayersPage extends React.Component {
     render() {
