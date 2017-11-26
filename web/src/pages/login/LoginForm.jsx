@@ -1,11 +1,9 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import { FieldGroup } from '../../components/BootstrapExt';
 import { Link } from 'react-router-dom';
-
-import { FieldGroup } from '../components/Form';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 class LoginForm extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -18,6 +16,20 @@ class LoginForm extends React.Component {
     event.preventDefault();
     this.props.onSubmit(this.state.email, this.state.password);
   }
+
+  onPasswordResetSubmt = (event) => {
+    event.preventDefault();
+    this.props.setPassword(this.state.email, this.state.code, this.state.password)
+      .then(() => this.setState({
+        message: 'Password reset',
+        error: '',
+      }))
+      .catch((err) => this.setState({
+        message: '',
+        error: err.message,
+      }));
+  }
+
 
   changeEmail = (event) => {
     this.setState({ email: event.target.value });
@@ -52,7 +64,6 @@ class LoginForm extends React.Component {
           required />
 
         <button type="submit" className="btn btn-primary">Sign in</button>
-        <Link to="/reset"><button className="btn btn-default">Password reset</button></Link>
       </form>
     );
   }
@@ -61,7 +72,6 @@ class LoginForm extends React.Component {
 LoginForm.propTypes = {
   onSubmit: PropTypes.func,
   clearCache: PropTypes.func,
-  username: PropTypes.string,
   error: PropTypes.string,
   email: PropTypes.string,
 };

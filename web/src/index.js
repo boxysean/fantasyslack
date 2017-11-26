@@ -1,13 +1,13 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
-import { combineReducers, createStore } from 'redux';
-import { cognito, setupCognito } from 'react-cognito';
-
-import App from './App';
-
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.css';
+
+import { cognito, setupCognito } from 'react-cognito';
+import { combineReducers, createStore } from 'redux';
+
+import App from './App';
+import { Provider } from 'react-redux';
+import React from 'react';
+import ReactDOM from 'react-dom';
 
 const reducers = combineReducers({
   cognito,

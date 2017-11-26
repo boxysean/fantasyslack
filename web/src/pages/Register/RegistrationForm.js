@@ -1,9 +1,7 @@
-import React from 'react';
+import { FieldGroup } from '../../components/BootstrapExt';
 import PropTypes from 'prop-types';
+import React from 'react';
 import { registerUser } from 'react-cognito';
-import { withRouter } from 'react-router';
-
-import { FieldGroup } from '../components/Form';
 
 
 class RegistrationForm extends React.Component {
@@ -24,10 +22,8 @@ class RegistrationForm extends React.Component {
     const { store } = this.context;
     const state = store.getState();
     event.preventDefault();
-    console.log("State!", this.state.email, this.state.password);
     registerUser(state.cognito.userPool, state.cognito.config, this.state.email, this.state.password, {}).then(
       (action) => {
-        console.log("Action! " + action);
         store.dispatch(action);
         this.props.history.push('/register/confirm');
       },
@@ -56,20 +52,21 @@ class RegistrationForm extends React.Component {
         label="Email"
         onChange={this.changeEmail}
         required />
-      
+
       <FieldGroup
         type="password"
         placeholder="password"
         label="Password"
         onChange={this.changePassword}
         required />
-      
+
       <button type="submit" className="btn btn-primary">Register</button>
     </form>
   )
 }
+
 RegistrationForm.contextTypes = {
   store: PropTypes.object,
 };
 
-export default withRouter(RegistrationForm);
+export default RegistrationForm;

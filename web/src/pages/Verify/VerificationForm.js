@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { FieldGroup } from '../components/Form';
+import { FieldGroup } from '../../components/BootstrapExt';
 
 
-class ConfirmForm extends React.Component {
+class VerificationForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -22,8 +22,6 @@ class ConfirmForm extends React.Component {
 
   onSubmit = (event) => {
     event.preventDefault();
-    console.log("State!", this.state.verificationCode, this.state.email);
-    console.log("Context!", this.context);
 
     this.props.onSubmit(this.state.verificationCode)
      .then((user) => {
@@ -72,8 +70,4 @@ class ConfirmForm extends React.Component {
   )
 }
 
-ConfirmForm.propTypes = {
-
-};
-
-export default ConfirmForm;
+export default VerificationForm;

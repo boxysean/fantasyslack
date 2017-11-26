@@ -1,66 +1,18 @@
-import React, { Component } from 'react';
-import {
-    BrowserRouter as Router,
-    Route,
-    Link,
-    Redirect,
-} from 'react-router-dom';
-import { Confirm } from 'react-cognito';
-import { Panel } from 'react-bootstrap';
-
 import './App.css';
 
-import { FSGamePage } from './pages/game';
-import { FSStandingsPage } from './pages/standings';
+import { Link, Redirect, Route, BrowserRouter as Router } from 'react-router-dom';
+
+import { FSGamePage } from './pages/NewGame';
 import { FSPlayersPage } from './pages/players';
-import RegistrationForm from './auth/RegistrationForm';
-import ConfirmForm from './auth/ConfirmForm';
-import Login from './pages/login';
+import { FSStandingsPage } from './pages/standings';
+import Home from './pages/Home';
+import Login from './pages/Login';
 import LoginLogoutButton from './components/LoginLogoutButton';
+import React from 'react';
+import Register from './pages/Register';
+import Verify from './pages/Verify';
 
-
-const PublicRoute = ({ component: Component, authStatus, ...rest}) => (
-    <Route {...rest} render={props => authStatus === false
-        ? ( <Component {...props} /> ) : (<Redirect to="/main" />)
-    } />
-)
-
-
-const PrivateRoute = ({ component: Component, authStatus, ...rest}) => (
-    <Route {...rest} render={props => authStatus === false
-        ? ( <Redirect to="/login" /> ) : ( <Component {...props} /> )
-    } />
-)
-
-
-class App extends Component {
-  constructor() {
-    super();
-    this.state = {
-      authStatus: false,
-    };
-  }
-
-  static defaultProps = {
-    authStatus: false,
-  };
-
-  validateUserSession() {
-    if(sessionStorage.getItem('isLoggedIn') === 'true'){
-      this.setState(() => {
-        return {
-          authStatus: true
-        }
-      })
-    } else {
-      this.setState(() => {
-        return {
-          authStatus: false
-        }
-      })
-    }
-  }
-
+class App extends React.Component {
   render() {
     return (
       <Router>
@@ -97,12 +49,12 @@ class App extends Component {
           </nav>
 
           <div className="container">
-            <PublicRoute authStatus={this.state.authStatus} path='/register' exact component={registrationForm} />
-            <PublicRoute authStatus={this.state.authStatus} path='/register/confirm' exact component={confirmForm} />
-            <PublicRoute authStatus={this.state.authStatus} exact path="/" component={Home} />
-            <PublicRoute authStatus={this.state.authStatus} path="/game" component={FSGamePage} />
-            <PublicRoute authStatus={this.state.authStatus} path="/standings" component={FSStandingsPage} />
-            <PublicRoute authStatus={this.state.authStatus} path="/players" component={FSPlayersPage} />
+            <Route path='/register' exact component={Register} />
+            <Route path='/register/confirm' exact component={Verify} />
+            <Route exact path="/" component={Home} />
+            <Route path="/game" component={FSGamePage} />
+            <Route path="/standings" component={FSStandingsPage} />
+            <Route path="/players" component={FSPlayersPage} />
             <Route path="/login" component={Login} />
           </div>
         </div>
@@ -110,40 +62,5 @@ class App extends Component {
     );
   }
 };
-
-
-          // <Route render={() => (<Redirect to="/login" />)} />
-          // <PublicRoute authStatus={this.state.authStatus} path='/login' exact component={LoginForm} />
-
-
-const Home = () => (
-  <div>
-    <h2>Home</h2>
-  </div>
-);
-
-const registrationForm = () => (
-  <Panel className="registration-form">
-    <h2>Register an account on Fantasy Slack</h2>
-    <div className="row">
-      <div className="col-md-4">
-        <RegistrationForm />
-      </div>
-    </div>
-  </Panel>
-);
-
-const confirmForm = () => (
-  <Panel className="confirm-form">
-    <p>A confirmation code has been sent to your email address</p>
-    <div className="row">
-      <div className="col-md-4">
-        <Confirm>
-          <ConfirmForm />
-        </Confirm>
-      </div>
-    </div>
-  </Panel>
-);
 
 export default App;

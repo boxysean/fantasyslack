@@ -30,5 +30,10 @@
     "rules": {
       "no-unused-vars": "off"
     }
+  },
+  "devDependencies": {
+    "import-sort-cli": "^3.3.0",
+    "import-sort-parser-babylon": "^3.2.0",
+    "import-sort-style-eslint": "^3.0.0"
   }
 }

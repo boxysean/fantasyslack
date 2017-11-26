@@ -1,20 +1,13 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { CognitoState, EmailVerification, Login, Logout, NewPasswordRequired } from 'react-cognito';
 import { Link, Redirect } from 'react-router-dom';
-import {
-  CognitoState,
-  Logout,
-  Login,
-  NewPasswordRequired,
-  EmailVerification,
-  Confirm,
-} from 'react-cognito';
-import LoginForm from '../../auth/LoginForm';
+
 import EmailVerificationForm from './EmailVerificationForm';
+import LoginForm from './LoginForm';
 import NewPasswordRequiredForm from './NewPasswordRequiredForm';
-import ConfirmForm from '../../auth/ConfirmForm';
 import { Panel } from 'react-bootstrap';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 const loggedInPageDebug = (user, attributes) => (
   <div>
@@ -69,12 +62,9 @@ const emailVerificationPage = () => (
   </div>
 );
 
-const confirmForm = () => (
+const confirmFormDebug = () => (
   <div>
     <p>A confirmation code has been sent to your email address</p>
-    <Confirm>
-      <ConfirmForm />
-    </Confirm>
     <Link to="/">Home</Link>
   </div>
 );
@@ -107,7 +97,7 @@ const BaseDashboard = ({ state, user, attributes }) => {
     case CognitoState.EMAIL_VERIFICATION_REQUIRED:
       return emailVerificationPage();
     case CognitoState.CONFIRMATION_REQUIRED:
-      return confirmForm();
+      return confirmFormDebug();
     default:
       return (
         <div>
@@ -127,7 +117,6 @@ const mapStateToProps = state => ({
   user: state.cognito.user,
   attributes: state.cognito.attributes,
 });
-
 
 const Dashboard = connect(mapStateToProps, null)(BaseDashboard);
 
