@@ -14,7 +14,7 @@ app = Flask(__name__)
 app.debug = True
 
 
-@app.route('/')  
+@app.route('/')
 def index():
     return "Hello, world (and cats)!", 200
 
@@ -48,8 +48,10 @@ def slack_event():
         return RESPONSE_OK
 
 
-@app.route('/api/v1/players', methods=['GET'])
-def players():
+@app.route('/api/v1/game/<slug>/players', methods=['GET'])
+def players(slug):
+    # TODO: Need to use slug to get a Slack workspace to look at
+
     start = datetime.datetime(2017, 10, 1)
     end = datetime.datetime(2017, 11, 1)
 

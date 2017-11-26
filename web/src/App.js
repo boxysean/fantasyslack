@@ -3,14 +3,13 @@ import './App.css';
 import { Link, Redirect, Route, BrowserRouter as Router } from 'react-router-dom';
 
 import { FSGamePage } from './pages/NewGame';
-import { FSPlayersPage } from './pages/players';
-import { FSStandingsPage } from './pages/standings';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import LoginLogoutButton from './components/LoginLogoutButton';
 import React from 'react';
 import Register from './pages/Register';
 import Verify from './pages/Verify';
+import Game from './pages/Game';
 
 class App extends React.Component {
   render() {
@@ -27,17 +26,14 @@ class App extends React.Component {
               </div>
 
               <div className="collapse navbar-collapse">
-                <ul className="nav navbar-nav">
+{/*}                <ul className="nav navbar-nav">
                   <li className="nav-item active">
-                    <Link to="/game">Game</Link>
-                  </li>
-                  <li className="nav-item">
                     <Link to="/standings">Standings</Link>
                   </li>
                   <li className="nav-item">
                     <Link to="/players">Players</Link>
                   </li>
-                </ul>
+                </ul> */}
                 <ul className="nav navbar-nav navbar-right">
                   <li className="nav-item">
                     <Link to="/register">Register</Link>
@@ -49,13 +45,12 @@ class App extends React.Component {
           </nav>
 
           <div className="container">
-            <Route path='/register' exact component={Register} />
-            <Route path='/register/confirm' exact component={Verify} />
+            <Route exact path="/register" exact component={Register} />
+            <Route exact path="/verify" exact component={Verify} />
             <Route exact path="/" component={Home} />
-            <Route path="/game" component={FSGamePage} />
-            <Route path="/standings" component={FSStandingsPage} />
-            <Route path="/players" component={FSPlayersPage} />
-            <Route path="/login" component={Login} />
+            <Route exact path="/new-game" component={FSGamePage} />
+            <Route path="/game/:slug" component={Game} />
+            <Route exact path="/login" component={Login} />
           </div>
         </div>
       </Router>

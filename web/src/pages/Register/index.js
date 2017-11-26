@@ -15,4 +15,4 @@ const Register = () => (
   </Panel>
 );
 
-export default withRouter(RegistrationForm);
+export default withRouter(Register);
