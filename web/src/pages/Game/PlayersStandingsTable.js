@@ -1,12 +1,13 @@
 import React from 'react';
-import axios from 'axios';
-import _ from 'lodash';
-
 import { Table } from 'react-bootstrap';
+import _ from 'lodash';
+import axios from 'axios';
+import { connect } from 'react-redux';
 
-export default class PlayersStandingsTable extends React.Component {
+class BasePlayersStandingsTable extends React.Component {
     constructor(props) {
       super(props);
+
       this.state = {
         activeTableColumnIndex: 0,
         reverse: false,
@@ -30,18 +31,16 @@ export default class PlayersStandingsTable extends React.Component {
     }
 
     tableColumnHeaderClickHandler(index) {
-        console.log("Clicked! " + index);
-
-        if (index === this.state.activeTableColumnIndex) {
-            this.setState({
-                'reverse': !this.state.reverse,
-            });
-        } else {
-            this.setState({
-                'reverse': false,
-                'activeTableColumnIndex': index,
-            });
-        }
+      if (index === this.state.activeTableColumnIndex) {
+        this.setState({
+          'reverse': !this.state.reverse,
+        });
+      } else {
+        this.setState({
+          'reverse': false,
+          'activeTableColumnIndex': index,
+        });
+      }
     }
 
     sortPlayers() {
@@ -84,7 +83,11 @@ export default class PlayersStandingsTable extends React.Component {
     }
 
   componentDidMount() {
-    axios.get("http://localhost:5000/api/v1/game/" + this.props.slug + "/players")
+    const jwtConfig = {
+      headers: {"accessToken": this.props.accessToken}
+    };
+
+    axios.get("http://localhost:5000/api/v1/game/" + this.props.slug + "/players", jwtConfig)
       .then(res => {
         this.setState({
           players: res.data
@@ -93,3 +96,21 @@ export default class PlayersStandingsTable extends React.Component {
     );
   }
 }
+
+const mapStateToProps = function(state) {
+  let accessToken = '';
+
+  try {
+    accessToken = state.cognito.user.signInUserSession.accessToken.jwtToken;
+  } catch (e) {
+
+  }
+
+  return {
+    accessToken: accessToken,
+    cognito: state.cognito,
+  }
+};
+const PlayersStandingsTable = connect(mapStateToProps, null)(BasePlayersStandingsTable);
+
+export default PlayersStandingsTable;

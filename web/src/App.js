@@ -45,11 +45,11 @@ class App extends React.Component {
           </nav>
 
           <div className="container">
+            <Route exact path="/" component={Home} />
+            <Route path="/game/:slug" component={Game} />
             <Route exact path="/register" exact component={Register} />
             <Route exact path="/verify" exact component={Verify} />
-            <Route exact path="/" component={Home} />
             <Route exact path="/new-game" component={FSGamePage} />
-            <Route path="/game/:slug" component={Game} />
             <Route exact path="/login" component={Login} />
           </div>
         </div>

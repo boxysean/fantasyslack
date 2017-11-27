@@ -23,11 +23,9 @@ class Game extends React.Component {
     return (
       <div>
         <nav className="navbar navbar-light bg-faded">
-          <span className="navbar-brand">{match.params.slug}</span>
-
           <ul className="nav navbar-nav">
             <li className="nav-item active">
-              <Link className="nav-link" to={match.url}>Overview</Link>
+              <Link className="navbar-brand nav-link" to={match.url}>{match.params.slug}</Link>
             </li>
             <li className="nav-item active">
               <Link className="nav-link" to={match.url + "/standings"}>Standings</Link>

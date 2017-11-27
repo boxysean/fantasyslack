@@ -6,7 +6,10 @@ import operator
 import os
 import pprint
 
-from flask import Flask, request, jsonify
+import jose.jwt
+import requests
+
+from flask import Flask, request, jsonify, abort
 import fantasyslack.models
 
 
@@ -48,8 +51,41 @@ def slack_event():
         return RESPONSE_OK
 
 
+def verify_identity():
+    pool_id = 'us-east-1_APXGoWFHh'
+    region = 'us-east-1'
+    response = requests.get(f"https://cognito-idp.{region}.amazonaws.com/{pool_id}/.well-known/jwks.json")
+
+    keys = {
+        key['kid']: key
+        for key in response.json().get('keys', [])
+    }
+
+    token = request.headers['accessToken']
+
+    try:
+        header = jose.jwt.get_unverified_header(token)
+    except jose.exceptions.JWTError:
+        abort(403)
+
+    key = keys[header['kid']]
+
+    try:
+        contents = jose.jwt.decode(token, key)
+    except jose.ExpiredSignatureError:
+        abort(403)
+
+    if contents['iss'] != 'https://cognito-idp.us-east-1.amazonaws.com/us-east-1_APXGoWFHh':
+        abort(403)
+
+    if contents['token_use'] != 'access':
+        abort(403)
+
+
 @app.route('/api/v1/game/<slug>/players', methods=['GET'])
 def players(slug):
+    verify_identity()
+
     # TODO: Need to use slug to get a Slack workspace to look at
 
     start = datetime.datetime(2017, 10, 1)
