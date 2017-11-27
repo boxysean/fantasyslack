@@ -2,6 +2,7 @@ import boto3
 import collections
 import datetime
 import json
+import logging
 import operator
 import os
 import pprint
@@ -61,25 +62,31 @@ def verify_identity():
         for key in response.json().get('keys', [])
     }
 
-    token = request.headers['accessToken']
+    token = request.headers['idToken']
 
     try:
         header = jose.jwt.get_unverified_header(token)
     except jose.exceptions.JWTError:
+        logging.debug('Could not parse JWT header')
         abort(403)
 
     key = keys[header['kid']]
 
     try:
-        contents = jose.jwt.decode(token, key)
+        contents = jose.jwt.decode(token, key, audience='6o37c8db0u7l74o1nhukqaqdup')
     except jose.ExpiredSignatureError:
+        logging.debug('Expired JWT signature')
         abort(403)
 
     if contents['iss'] != 'https://cognito-idp.us-east-1.amazonaws.com/us-east-1_APXGoWFHh':
+        logging.debug('Issuing JWT source does not match')
         abort(403)
 
-    if contents['token_use'] != 'access':
+    if contents['token_use'] not in ['access', 'id']:
+        logging.debug('Token use is not access nor id')
         abort(403)
+
+    request.user_email = contents['email']
 
 
 @app.route('/api/v1/game/<slug>/players', methods=['GET'])
@@ -90,6 +97,8 @@ def players(slug):
 
     start = datetime.datetime(2017, 10, 1)
     end = datetime.datetime(2017, 11, 1)
+
+    print(request.user_email)
 
     players = collections.defaultdict(lambda: collections.defaultdict(int))
 

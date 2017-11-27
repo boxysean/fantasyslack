@@ -84,7 +84,10 @@ class BasePlayersStandingsTable extends React.Component {
 
   componentDidMount() {
     const jwtConfig = {
-      headers: {"accessToken": this.props.accessToken}
+      headers: {
+        "accessToken": this.props.accessToken,
+        "idToken": this.props.idToken,
+      },
     };
 
     axios.get("http://localhost:5000/api/v1/game/" + this.props.slug + "/players", jwtConfig)
@@ -106,8 +109,17 @@ const mapStateToProps = function(state) {
 
   }
 
+  let idToken = '';
+
+  try {
+    idToken = state.cognito.user.signInUserSession.idToken.jwtToken;
+  } catch (e) {
+
+  }
+
   return {
     accessToken: accessToken,
+    idToken: idToken,
     cognito: state.cognito,
   }
 };
