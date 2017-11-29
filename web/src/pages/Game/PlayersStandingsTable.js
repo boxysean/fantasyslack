@@ -90,7 +90,7 @@ class BasePlayersStandingsTable extends React.Component {
       },
     };
 
-    axios.get("http://localhost:5000/api/v1/game/" + this.props.slug + "/players", jwtConfig)
+    axios.get("http://localhost:5000/api/v1/games/" + this.props.slug + "/players", jwtConfig)
       .then(res => {
         this.setState({
           players: res.data

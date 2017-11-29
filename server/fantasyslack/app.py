@@ -7,11 +7,11 @@ import operator
 import os
 import pprint
 
-import jose.jwt
-import requests
-
 from flask import Flask, request, jsonify, abort
+
+import fantasyslack.auth
 import fantasyslack.models
+import fantasyslack.util
 
 
 app = Flask(__name__)
@@ -52,53 +52,26 @@ def slack_event():
         return RESPONSE_OK
 
 
-def verify_identity():
-    pool_id = 'us-east-1_APXGoWFHh'
-    region = 'us-east-1'
-    response = requests.get(f"https://cognito-idp.{region}.amazonaws.com/{pool_id}/.well-known/jwks.json")
+@app.route('/api/v1/games/<slug>/players', methods=['GET'])
+@fantasyslack.auth.login_required
+def players(slug, user_email=None):
+    game = fantasyslack.util.get_game_by_slug(slug)
 
-    keys = {
-        key['kid']: key
-        for key in response.json().get('keys', [])
-    }
+    if not game:
+        abort(404)
 
-    token = request.headers['idToken']
+    user = fantasyslack.util.get_user_by_email(user_email)
 
-    try:
-        header = jose.jwt.get_unverified_header(token)
-    except jose.exceptions.JWTError:
-        logging.debug('Could not parse JWT header')
+    if not user:
         abort(403)
 
-    key = keys[header['kid']]
+    manager = fantasyslack.util.get_game_manager_by_user_id(game.id, user.id)
 
-    try:
-        contents = jose.jwt.decode(token, key, audience='6o37c8db0u7l74o1nhukqaqdup')
-    except jose.ExpiredSignatureError:
-        logging.debug('Expired JWT signature')
+    if not manager:
         abort(403)
-
-    if contents['iss'] != 'https://cognito-idp.us-east-1.amazonaws.com/us-east-1_APXGoWFHh':
-        logging.debug('Issuing JWT source does not match')
-        abort(403)
-
-    if contents['token_use'] not in ['access', 'id']:
-        logging.debug('Token use is not access nor id')
-        abort(403)
-
-    request.user_email = contents['email']
-
-
-@app.route('/api/v1/game/<slug>/players', methods=['GET'])
-def players(slug):
-    verify_identity()
-
-    # TODO: Need to use slug to get a Slack workspace to look at
 
     start = datetime.datetime(2017, 10, 1)
     end = datetime.datetime(2017, 11, 1)
-
-    print(request.user_email)
 
     players = collections.defaultdict(lambda: collections.defaultdict(int))
 
@@ -117,6 +90,28 @@ def players(slug):
         row['rank'] = idx+1
 
     return jsonify(table)
+
+
+@app.route('/api/v1/games', methods=['GET'])
+def list_games():
+    # game = list(fantasyslack.models.GameModel.scan())
+    # print(dir(game))
+    # import pdb; pdb.set_trace()
+    # print(list(fantasyslack.models.GameModel.scan()))
+    return jsonify([
+        game.attribute_values
+        for game in fantasyslack.models.GameModel.scan()
+    ])
+
+
+@app.route('/api/v1/games/<slug>', methods=['GET'])
+def get_game(slug):
+    game = fantasyslack.util.get_game_by_slug(slug)
+
+    if not game:
+        abort(404)
+
+    return jsonify(game.attribute_values)
 
 
 def get_config():

@@ -39,8 +39,8 @@ class ManagerModel(BaseModel):
     class Meta(BaseMeta):
         table_name = 'fantasyslack-managers'
 
-    slack_team_id = UnicodeAttribute()  # secondary key A
-    slack_user_id = UnicodeAttribute()  # secondary key A
+    game_id = UnicodeAttribute()
+    user_id = UnicodeAttribute()
     player_id = UnicodeAttribute()
 
 
@@ -79,8 +79,8 @@ class ScoreHistoryModel(BaseModel):
     ]
 
     """
-    team_id = UnicodeAttribute()
     game_id = UnicodeAttribute()
+    team_id = UnicodeAttribute()
     scoring = ListAttribute(of=ScoreHistoryAttribute)
 
 
@@ -89,6 +89,7 @@ class GameModel(BaseModel):
         table_name = 'fantasyslack-games'
 
     name = UnicodeAttribute()
+    slug = UnicodeAttribute()
     team_ids = ListAttribute()  # probably doesn't change
     category_ids = ListAttribute()  # must not change
     start = UTCDateTimeAttribute()
@@ -99,6 +100,7 @@ class TeamModel(BaseModel):
     class Meta(BaseMeta):
         table_name = 'fantasyslack-teams'
 
+    game_id = UnicodeAttribute()
     manager_id = UnicodeAttribute()  # secondary key A
     name = UnicodeAttribute()
     current_player_ids = ListAttribute()
@@ -114,6 +116,7 @@ class TransactionModel(BaseModel):
     class Meta(BaseMeta):
         table_name = 'fantasyslack-transactions'
 
+    game_id = UnicodeAttribute()
     team_id = UnicodeAttribute()
     player_id = UnicodeAttribute()
     action = UnicodeAttribute()  # add, drop, trade, banned(?)
@@ -122,18 +125,26 @@ class TransactionModel(BaseModel):
 
 
 class PlayerModel(BaseModel):
+    """
+    This is a user in the context of a Fantasy Slack game. A Player is owned by
+    a Manager.
+    """
     class Meta(BaseMeta):
         table_name = 'fantasyslack-players'
 
-    slack_team_id = UnicodeAttribute()
+    game_id = UnicodeAttribute()
     slack_user_id = UnicodeAttribute()
-    name = UnicodeAttribute()
+
+    @property
+    def name(self):
+        return _from_cache(SlackUserModel, self.slack_user_id).name
 
 
 class PlayerPointModel(BaseModel):
     class Meta(BaseMeta):
         table_name = 'fantasyslack-points'
 
+    game_id = UnicodeAttribute()
     player_id = UnicodeAttribute()
     category_id = UnicodeAttribute()
     related_event_ids = ListAttribute()
@@ -148,17 +159,44 @@ class PlayerPointModel(BaseModel):
 
 
 class CategoryModel(BaseModel):
+    """
+    This is a Category chosen for a particular Game.
+    """
     class Meta(BaseMeta):
         table_name = 'fantasyslack-categories'
 
+    game_id = UnicodeAttribute()
     name = UnicodeAttribute()
 
 
 class DraftSelectionModel(BaseModel):
     class Meta(BaseMeta):
-        table_name = 'fantasyslack-draftselection'
+        table_name = 'fantasyslack-draftselections'
 
-    player_id = UnicodeAttribute()
-    team_id = UnicodeAttribute()
     game_id = UnicodeAttribute()
+    team_id = UnicodeAttribute()
+    player_id = UnicodeAttribute()
     order = NumberAttribute()
+
+
+class UserModel(BaseModel):
+    """
+    This is a user in the context of the Fantasy Slack app.
+    """
+    class Meta(BaseMeta):
+        table_name = 'fantasyslack-users'
+
+    email = UnicodeAttribute()
+    slack_user_id = UnicodeAttribute()
+
+
+class SlackUserModel(BaseModel):
+    """
+    This is a user in the context of Slack.
+    """
+    class Meta(BaseMeta):
+        table_name = 'fantasyslack-slackusers'
+
+    name = UnicodeAttribute()
+    slack_team_id = UnicodeAttribute()  # secondary key A
+    slack_user_id = UnicodeAttribute()  # secondary key A
