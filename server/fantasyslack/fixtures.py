@@ -1,4 +1,6 @@
+import collections
 import datetime
+import itertools
 import logging
 import random
 
@@ -84,12 +86,14 @@ def create_fixtures(args):
         'Team Whale',
     ]
 
+    player_ids_iterator = iter([player.id for player in players])
+
     teams = [
         _make_model(fantasyslack.models.TeamModel,
             game_id=game_id,
             manager_id=manager.id,
             name=team_name,
-            current_player_ids=[],
+            current_player_ids=list(itertools.islice(player_ids_iterator, 0, 2)),
             current_points=[],
         )
         for team_name, manager in zip(team_names, managers)
@@ -119,7 +123,7 @@ def create_fixtures(args):
         end=datetime.datetime(2017, 12, 1),
     )
 
-    _generate_player_points(game_id, players, categories)
+    _generate_player_points(game_id, players, categories, teams)
 
 
 def _random_datetime(start, end):
@@ -129,14 +133,23 @@ def _random_datetime(start, end):
     return start + datetime.timedelta(seconds=random_second)
 
 
-def _generate_player_points(game_id, players, categories, start=None, end=None):
+def _generate_player_points(game_id, players, categories, teams, start=None, end=None):
     if not start:
         start = datetime.datetime(2017, 10, 1)
 
     if not end:
         end = datetime.datetime(2017, 11, 1)
 
+    player_id_team_map = {
+        player_id: team
+        for team in teams
+        for player_id in team.current_player_ids
+    }
+
+    team_points = collections.defaultdict(lambda: 0)
+
     for player in players:
+        team = player_id_team_map[player.id]
         for category in categories:
             points = random.randrange(10)
             for i in range(points):
@@ -149,3 +162,11 @@ def _generate_player_points(game_id, players, categories, start=None, end=None):
                     category_id=category.id,
                     related_event_ids=[],
                 )
+            team_points[(team, category.id)] += points
+
+    for (team, category_id), points in team_points.items():
+        team.current_points.append({
+            'category_id': category_id,
+            'points': points,
+        })
+        team.save()

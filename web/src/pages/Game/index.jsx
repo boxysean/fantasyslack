@@ -37,7 +37,7 @@ class Game extends React.Component {
         </nav>
 
         <div className="container">
-          <Route exact path="/game/:slug" component={Overview} />
+          <Route exact path="/game/:slug" render={() => <Overview slug={match.params.slug} />} />
           <Route exact path="/game/:slug/standings" component={Standings} />
           <Route exact path="/game/:slug/players" component={Players} />
         </div>

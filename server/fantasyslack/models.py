@@ -95,6 +95,21 @@ class GameModel(BaseModel):
     start = UTCDateTimeAttribute()
     end = UTCDateTimeAttribute()
 
+    @property
+    def categories(self):
+        return [_from_cache(CategoryModel, category_id)
+                for category_id in self.category_ids]
+
+    @property
+    def teams(self):
+        return [_from_cache(TeamModel, team_id)
+                for team_id in self.team_ids]
+
+
+class TeamPointAttribute(MapAttribute):
+    category_id = UnicodeAttribute()
+    points = NumberAttribute()
+
 
 class TeamModel(BaseModel):
     class Meta(BaseMeta):
@@ -104,7 +119,7 @@ class TeamModel(BaseModel):
     manager_id = UnicodeAttribute()  # secondary key A
     name = UnicodeAttribute()
     current_player_ids = ListAttribute()
-    current_points = ListAttribute()
+    current_points = ListAttribute(of=TeamPointAttribute)
 
 
 class TransactionMapAttribute(MapAttribute):
