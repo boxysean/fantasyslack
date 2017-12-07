@@ -160,6 +160,15 @@ class PlayerModel(BaseModel):
     def name(self):
         return _from_cache(SlackUserModel, self.slack_user_id).name
 
+    @property
+    def current_team(self):
+        for team in _from_cache(GameModel, self.game_id).teams:
+            for player_id in team.current_player_ids:
+                if self.id == player_id:
+                    return team
+
+        return None
+
 
 class PlayerPointModel(BaseModel):
     class Meta(BaseMeta):

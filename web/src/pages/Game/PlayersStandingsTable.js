@@ -27,6 +27,10 @@ class BasePlayersStandingsTable extends React.Component {
           title: 'Points',
           key: 'points'
         },
+        {
+          title: 'Current Team',
+          key: 'team'
+        },
       ];
     }
 
@@ -74,6 +78,7 @@ class BasePlayersStandingsTable extends React.Component {
                         <td>{player.rank}</td>
                         <td>{player.name}</td>
                         <td>{player.points}</td>
+                        <td>{player.team}</td>
                     </tr>
                     )
                 }

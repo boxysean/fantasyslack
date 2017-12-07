@@ -76,14 +76,15 @@ def players(slug, user_email=None):
     players = collections.defaultdict(lambda: collections.defaultdict(int))
 
     for player_point in fantasyslack.models.PlayerPointModel.scan(fantasyslack.models.PlayerPointModel.created.between(start, end)):
-        players[player_point.player.name][player_point.category.name] += 1
+        players[player_point.player][player_point.category.name] += 1
 
     table = [
         {
-            'name': player_name,
+            'name': player.name,
             'points': sum(entry.values()),
+            'team': player.current_team.name,
         }
-        for player_name, entry in players.items()
+        for player, entry in players.items()
     ]
 
     for idx, row in enumerate(sorted(table, key=operator.itemgetter('points'), reverse=True)):
