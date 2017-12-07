@@ -107,25 +107,14 @@ def get_game(slug):
     if not game:
         abort(404)
 
-    team_scores = {}
-
-    def _get_category_points(team, category):
-        return [point for point in team.current_points if point.category_id == category.id][0].points
-
-    for category in game.categories:
-        team_points = sorted(game.teams,
-                             key=lambda team: _get_category_points(team, category))
-        team_scores[category] = enumerate([team.name for team in team_points], 1)
-
     return jsonify({
         'name': game.attribute_values['name'],
         'start': game.attribute_values['start'],
         'end': game.attribute_values['end'],
-        'categories': [category.name
-                       for category in game.categories],
-        'teams': [team.name
-                  for team in game.teams],
-        'scores': team_scores,
+        'categories': [category.name for category in game.categories],
+        'teams': [team.name for team in game.teams],
+        'categories': fantasyslack.util.score_categories(game),
+        'standings': fantasyslack.util.score_game(game),
     })
 
 

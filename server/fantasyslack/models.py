@@ -121,6 +121,12 @@ class TeamModel(BaseModel):
     current_player_ids = ListAttribute()
     current_points = ListAttribute(of=TeamPointAttribute)
 
+    def get_category_points(self, category):
+        return [point for point in self.current_points if point.category_id == category.id][0].points
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}({self.game_id}, {self.name})"
+
 
 class TransactionMapAttribute(MapAttribute):
     player_id = UnicodeAttribute()
@@ -182,6 +188,9 @@ class CategoryModel(BaseModel):
 
     game_id = UnicodeAttribute()
     name = UnicodeAttribute()
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}({self.name})"
 
 
 class DraftSelectionModel(BaseModel):
