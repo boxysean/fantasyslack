@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 
 class Overview extends React.Component {
   static propTypes = {
@@ -32,7 +33,7 @@ class Overview extends React.Component {
         </ul>
         <p>Categories:</p>
         <ul>
-          {this.state.game.categories.map((category) =>
+          {_.keys(this.state.game.categories).map((category) =>
             <li>{category}</li>
           )}
         </ul>
