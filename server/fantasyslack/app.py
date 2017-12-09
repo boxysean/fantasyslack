@@ -1,6 +1,7 @@
 import boto3
 import collections
 import datetime
+import dateutil
 import json
 import logging
 import operator
@@ -70,8 +71,19 @@ def players(slug, user_email=None):
     if not team:
         abort(403)
 
-    start = datetime.datetime(2017, 10, 1)
-    end = datetime.datetime(2017, 11, 1)
+
+    start_raw = request.args.get('start', None)
+    end_raw = request.args.get('end', None)
+
+    if start_raw:
+        start = dateutil.parser.parse(start_raw)
+    else:
+        start = datetime.datetime(2017, 10, 1)
+
+    if end_raw:
+        end = dateutil.parser.parse(end_raw)
+    else:
+        end = datetime.datetime(2017, 11, 1)
 
     for player_point in fantasyslack.models.PlayerPointModel.scan(fantasyslack.models.PlayerPointModel.created.between(start, end)):
         players[player_point.player][player_point.category.name] += 1
@@ -100,7 +112,11 @@ def players(slug, user_email=None):
     for idx, row in enumerate(sorted(table, key=operator.itemgetter('points'), reverse=True)):
         row['rank'] = idx+1
 
-    return jsonify(table)
+    return jsonify({
+        'players': table,
+        'start': start.isoformat(),
+        'end': end.isoformat(),
+    })
 
 
 @app.route('/api/v1/games', methods=['GET'])
