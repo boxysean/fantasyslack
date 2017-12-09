@@ -131,6 +131,7 @@ def get_game(slug):
 
     return jsonify({
         'name': game.attribute_values['name'],
+        'slug': slug,
         'start': game.attribute_values['start'].isoformat(),
         'end': game.attribute_values['end'].isoformat(),
         'categories': [category.name for category in game.categories],
@@ -139,7 +140,7 @@ def get_game(slug):
         'standings': fantasyslack.util.score_game(game),
         'draft': game.attribute_values['draft'].attribute_values,
         'admins': [fantasyslack.util.get_user_by_id(user_id).name
-                   for user_id in game.attribute_values['admin_user_ids']]
+                   for user_id in game.attribute_values['admin_user_ids']],
     })
 
 

@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import PlayersStandingsTable from './PlayersStandingsTable';
+import StandingsTable from './StandingsTable';
 
-class Players extends React.Component {
+class Teams extends React.Component {
   static propTypes = {
     game: PropTypes.object,
   };
@@ -12,8 +12,8 @@ class Players extends React.Component {
     if (this.props.game) {
       return (
         <div>
-          <h1>Players</h1>
-          <PlayersStandingsTable slug={this.props.game.slug} />
+          <h1>Teams</h1>
+          <StandingsTable slug={this.props.game.slug} />
         </div>
       );
     } else {
@@ -22,4 +22,4 @@ class Players extends React.Component {
   }
 }
 
-export default Players;
+export default Teams;
