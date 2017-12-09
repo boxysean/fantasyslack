@@ -28,6 +28,13 @@ def get_user_by_email(email):
         return None
 
 
+def get_user_by_id(user_id):
+    try:
+        return list(fantasyslack.models.UserModel.query(user_id))[0]
+    except IndexError:
+        return None
+
+
 def get_game_by_slug(slug):
     try:
         return list(fantasyslack.models.GameModel.scan(
@@ -37,11 +44,11 @@ def get_game_by_slug(slug):
         return None
 
 
-def get_game_manager_by_user_id(game_id, user_id):
+def get_game_team_by_user_id(game_id, user_id):
     try:
-        return list(fantasyslack.models.ManagerModel.scan(
-            (fantasyslack.models.ManagerModel.game_id == game_id)
-            & (fantasyslack.models.ManagerModel.user_id == user_id)
+        return list(fantasyslack.models.TeamModel.scan(
+            (fantasyslack.models.TeamModel.game_id == game_id)
+            & (fantasyslack.models.TeamModel.user_id == user_id)
         ))[0]
     except IndexError:
         return None

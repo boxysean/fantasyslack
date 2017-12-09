@@ -41,6 +41,7 @@ if __name__ == '__main__':
     create_fixtures_parser = subparser.add_parser('create_fixtures')
     create_fixtures_parser.add_argument('--clear', action='store_true', default=False)
     create_fixtures_parser.add_argument('--do-not-create', action='store_true', default=False)
+    create_fixtures_parser.add_argument('--pre-game', action='store_true', default=False)
     create_fixtures_parser.set_defaults(func=fantasyslack.fixtures.create_fixtures)
 
     args = parser.parse_args()

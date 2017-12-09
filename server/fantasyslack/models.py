@@ -1,7 +1,14 @@
 import datetime
 import uuid
 
-from pynamodb.attributes import UTCDateTimeAttribute, ListAttribute, MapAttribute, NumberAttribute, UnicodeAttribute
+from pynamodb.attributes import (
+    BooleanAttribute,
+    ListAttribute,
+    MapAttribute,
+    NumberAttribute,
+    UnicodeAttribute,
+    UTCDateTimeAttribute,
+)
 from pynamodb.models import Model
 
 
@@ -26,22 +33,6 @@ class BaseModel(Model):
     id = UnicodeAttribute(hash_key=True, default=lambda: str(uuid.uuid4()))
     created = UTCDateTimeAttribute(range_key=True, default=datetime.datetime.utcnow())
     updated = UTCDateTimeAttribute(default=datetime.datetime.utcnow())
-
-
-class EventModel(BaseModel):
-    class Meta(BaseMeta):
-        table_name = 'fantasyslack-events'
-
-    from_slack = MapAttribute()
-
-
-class ManagerModel(BaseModel):
-    class Meta(BaseMeta):
-        table_name = 'fantasyslack-managers'
-
-    game_id = UnicodeAttribute()
-    user_id = UnicodeAttribute()
-    player_id = UnicodeAttribute()
 
 
 class ScoreHistoryAttribute(MapAttribute):
@@ -84,6 +75,14 @@ class ScoreHistoryModel(BaseModel):
     scoring = ListAttribute(of=ScoreHistoryAttribute)
 
 
+class GameDraftAttribute(MapAttribute):
+    has_started = BooleanAttribute()
+    has_ended = BooleanAttribute()
+    team_order = ListAttribute()
+    position = NumberAttribute()
+    start = UTCDateTimeAttribute()
+
+
 class GameModel(BaseModel):
     class Meta(BaseMeta):
         table_name = 'fantasyslack-games'
@@ -94,6 +93,10 @@ class GameModel(BaseModel):
     category_ids = ListAttribute()  # must not change
     start = UTCDateTimeAttribute()
     end = UTCDateTimeAttribute()
+    draft = GameDraftAttribute()
+    players_per_team = NumberAttribute()
+    admin_user_ids = ListAttribute()
+    slack_team_id = UnicodeAttribute()
 
     @property
     def categories(self):
@@ -104,6 +107,14 @@ class GameModel(BaseModel):
     def teams(self):
         return [_from_cache(TeamModel, team_id)
                 for team_id in self.team_ids]
+
+    @property
+    def has_started(self):
+        return datetime.datetime.utcnow() >= self.start
+
+    @property
+    def has_ended(self):
+        return datetime.datetime.utcnow() >= self.end
 
 
 class TeamPointAttribute(MapAttribute):
@@ -116,13 +127,16 @@ class TeamModel(BaseModel):
         table_name = 'fantasyslack-teams'
 
     game_id = UnicodeAttribute()
-    manager_id = UnicodeAttribute()  # secondary key A
+    user_id = UnicodeAttribute()  # secondary key A
     name = UnicodeAttribute()
     current_player_ids = ListAttribute()
     current_points = ListAttribute(of=TeamPointAttribute)
 
     def get_category_points(self, category):
-        return [point for point in self.current_points if point.category_id == category.id][0].points
+        try:
+            return [point for point in self.current_points if point.category_id == category.id][0].points
+        except IndexError:
+            return 0
 
     def __repr__(self):
         return f"{self.__class__.__name__}({self.game_id}, {self.name})"
@@ -148,17 +162,18 @@ class TransactionModel(BaseModel):
 class PlayerModel(BaseModel):
     """
     This is a user in the context of a Fantasy Slack game. A Player is owned by
-    a Manager.
+    a Fantasy Slack User.
     """
     class Meta(BaseMeta):
         table_name = 'fantasyslack-players'
 
     game_id = UnicodeAttribute()
-    slack_user_id = UnicodeAttribute()
+    internal_slack_user_id = UnicodeAttribute()
+    slack_team_id = UnicodeAttribute()  # Useful duplicate
 
     @property
     def name(self):
-        return _from_cache(SlackUserModel, self.slack_user_id).name
+        return _from_cache(InternalSlackUserModel, self.internal_slack_user_id).name
 
     @property
     def current_team(self):
@@ -177,7 +192,7 @@ class PlayerPointModel(BaseModel):
     game_id = UnicodeAttribute()
     player_id = UnicodeAttribute()
     category_id = UnicodeAttribute()
-    related_event_ids = ListAttribute()
+    related_slack_event_ids = ListAttribute()
 
     @property
     def player(self):
@@ -220,10 +235,23 @@ class UserModel(BaseModel):
         table_name = 'fantasyslack-users'
 
     email = UnicodeAttribute()
+    name = UnicodeAttribute()
+    internal_slack_user_ids = ListAttribute()
+    admin = BooleanAttribute()
+
+
+# Slack-facing models
+
+class InternalSlackEventModel(BaseModel):
+    class Meta(BaseMeta):
+        table_name = 'fantasyslack-slackevents'
+
+    slack_team_id = UnicodeAttribute()
     slack_user_id = UnicodeAttribute()
+    from_slack = MapAttribute()
 
 
-class SlackUserModel(BaseModel):
+class InternalSlackUserModel(BaseModel):
     """
     This is a user in the context of Slack.
     """
@@ -231,5 +259,5 @@ class SlackUserModel(BaseModel):
         table_name = 'fantasyslack-slackusers'
 
     name = UnicodeAttribute()
-    slack_team_id = UnicodeAttribute()  # secondary key A
-    slack_user_id = UnicodeAttribute()  # secondary key A
+    slack_team_id = UnicodeAttribute()
+    slack_user_id = UnicodeAttribute()

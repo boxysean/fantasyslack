@@ -37,7 +37,11 @@ def create_fixtures(args):
     if args.do_not_create:
         return
 
-    game_id = 'FAKE-GAME-ID'
+    if args.pre_game:
+        game_id = 'FAKE-PRE-GAME-ID'
+    else:
+        game_id = 'FAKE-GAME-ID'
+
     slack_team_id = 'T123'
 
     player_names = [
@@ -49,8 +53,10 @@ def create_fixtures(args):
         'Newman',
     ]
 
+    players_per_team = 2
+
     slack_users = [
-        _make_model(fantasyslack.models.SlackUserModel,
+        _make_model(fantasyslack.models.InternalSlackUserModel,
             name=player_name,
             slack_team_id=slack_team_id,
             slack_user_id=str(hash(player_name)),
@@ -60,24 +66,20 @@ def create_fixtures(args):
     users = [
         _make_model(fantasyslack.models.UserModel,
             email=f"{player_name.lower()}@gmail.com",
-            slack_user_id=slack_user.id,
+            name=player_name,
+            internal_slack_user_ids=[slack_user.id],
+            admin=player_name == 'boxysean',
         ) for player_name, slack_user in list(zip(player_names, slack_users))[0:3]
     ]
+
+    admin_user_id = [user.id for user in users if user.email == 'boxysean@gmail.com'][0]
 
     players = [
         _make_model(fantasyslack.models.PlayerModel,
             game_id=game_id,
-            slack_user_id=slack_user.id,
+            internal_slack_user_id=slack_user.id,
+            slack_team_id=slack_team_id,
         ) for slack_user in slack_users
-    ]
-
-    managers = [
-        _make_model(fantasyslack.models.ManagerModel,
-            game_id=game_id,
-            player_id=player.id,
-            user_id=user.id,
-        )
-        for player, user in list(zip(players, users))[0:3]
     ]
 
     team_names = [
@@ -91,12 +93,12 @@ def create_fixtures(args):
     teams = [
         _make_model(fantasyslack.models.TeamModel,
             game_id=game_id,
-            manager_id=manager.id,
+            user_id=user.id,
             name=team_name,
             current_player_ids=list(itertools.islice(player_ids_iterator, 0, 2)),
             current_points=[],
         )
-        for team_name, manager in zip(team_names, managers)
+        for team_name, user in zip(team_names, users)
     ]
 
     category_names = [
@@ -113,17 +115,58 @@ def create_fixtures(args):
         for category_name in category_names
     ]
 
-    game = _make_model(fantasyslack.models.GameModel,
-        id=game_id,
-        name='Fake Game',
-        slug='fake-game',
-        team_ids=[team.id for team in teams],
-        category_ids=[category.id for category in categories],
-        start=datetime.datetime(2017, 11, 1),
-        end=datetime.datetime(2017, 12, 1),
-    )
+    if args.pre_game:
+        team_order = [team.id for team in teams]
+        random.shuffle(team_order)
 
-    _generate_player_points(game_id, players, categories, teams)
+        draft = {
+            'has_started': False,
+            'has_ended': False,
+            'team_order': team_order,
+            'position': 0,
+            'start': datetime.datetime(2017, 12, 10, 17, 0, 0),
+        }
+
+        game = _make_model(fantasyslack.models.GameModel,
+            id=game_id,
+            name='Fake Pre-game',
+            slug='fake-pre-game',
+            team_ids=[team.id for team in teams],
+            category_ids=[category.id for category in categories],
+            start=datetime.datetime(2018, 1, 1),
+            end=datetime.datetime(2018, 2, 1),
+            players_per_team=players_per_team,
+            draft=draft,
+            admin_user_ids=[admin_user_id],
+            slack_team_id=slack_team_id,
+        )
+    else:
+        team_order = [team.id for team in teams]
+        random.shuffle(team_order)
+
+        draft = {
+            'has_started': True,
+            'has_ended': True,
+            'team_order': team_order,
+            'position': players_per_team * len(teams),
+            'start': datetime.datetime(2017, 10, 31, 17, 0, 0),
+        }
+
+        game = _make_model(fantasyslack.models.GameModel,
+            id=game_id,
+            name='Fake Game',
+            slug='fake-game',
+            team_ids=[team.id for team in teams],
+            category_ids=[category.id for category in categories],
+            start=datetime.datetime(2017, 11, 1),
+            end=datetime.datetime(2017, 12, 1),
+            players_per_team=players_per_team,
+            draft=draft,
+            admin_user_ids=[admin_user_ids],
+            slack_team_id=slack_team_id,
+        )
+
+        _generate_player_points(game_id, players, categories, teams)
 
 
 def _random_datetime(start, end):
@@ -160,7 +203,7 @@ def _generate_player_points(game_id, players, categories, teams, start=None, end
                     updated=event_time,
                     player_id=player.id,
                     category_id=category.id,
-                    related_event_ids=[],
+                    related_slack_event_ids=[],
                 )
             team_points[(team, category.id)] += points
 

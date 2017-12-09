@@ -65,15 +65,25 @@ def players(slug, user_email=None):
     if not user:
         abort(403)
 
-    manager = fantasyslack.util.get_game_manager_by_user_id(game.id, user.id)
+    team = fantasyslack.util.get_game_team_by_user_id(game.id, user.id)
 
-    if not manager:
+    if not team:
         abort(403)
 
     start = datetime.datetime(2017, 10, 1)
     end = datetime.datetime(2017, 11, 1)
 
+    for player_point in fantasyslack.models.PlayerPointModel.scan(fantasyslack.models.PlayerPointModel.created.between(start, end)):
+        players[player_point.player][player_point.category.name] += 1
+
     players = collections.defaultdict(lambda: collections.defaultdict(int))
+
+    existing_players = fantasyslack.models.PlayerModel.scan(
+        fantasyslack.models.PlayerModel.slack_team_id == game.slack_team_id
+    )
+
+    for player in existing_players:
+        players[player] = {}
 
     for player_point in fantasyslack.models.PlayerPointModel.scan(fantasyslack.models.PlayerPointModel.created.between(start, end)):
         players[player_point.player][player_point.category.name] += 1
@@ -95,8 +105,19 @@ def players(slug, user_email=None):
 
 @app.route('/api/v1/games', methods=['GET'])
 def list_games():
+    def expand(obj):
+        if type(obj) == dict:
+            return {
+                k: expand(v)
+                for k, v in obj.items()
+            }
+        elif type(obj) == fantasyslack.models.GameDraftAttribute:
+            return expand(obj.attribute_values)
+        else:
+            return obj
+
     return jsonify([
-        game.attribute_values
+        expand(game.attribute_values)
         for game in fantasyslack.models.GameModel.scan()
     ])
 
@@ -110,12 +131,15 @@ def get_game(slug):
 
     return jsonify({
         'name': game.attribute_values['name'],
-        'start': game.attribute_values['start'],
-        'end': game.attribute_values['end'],
+        'start': game.attribute_values['start'].isoformat(),
+        'end': game.attribute_values['end'].isoformat(),
         'categories': [category.name for category in game.categories],
         'teams': [team.name for team in game.teams],
         'categories': fantasyslack.util.score_categories(game),
         'standings': fantasyslack.util.score_game(game),
+        'draft': game.attribute_values['draft'].attribute_values,
+        'admins': [fantasyslack.util.get_user_by_id(user_id).name
+                   for user_id in game.attribute_values['admin_user_ids']]
     })
 
 

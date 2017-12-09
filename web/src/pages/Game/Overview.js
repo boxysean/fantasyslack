@@ -15,6 +15,7 @@ class Overview extends React.Component {
       game: {
         teams: [],  // <-- need this pre-mount
         categories: [],
+        draft: {},
       },
     };
   }
@@ -25,6 +26,7 @@ class Overview extends React.Component {
         <h2>Overview</h2>
         <p>Start: {this.state.game.start}</p>
         <p>End: {this.state.game.end}</p>
+        <p>Draft Start: {this.state.game.draft.start}</p>
         <p>Teams:</p>
         <ul>
           {this.state.game.teams.map((team) =>
