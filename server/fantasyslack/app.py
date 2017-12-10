@@ -71,7 +71,6 @@ def players(slug, user_email=None):
     if not team:
         abort(403)
 
-
     start_raw = request.args.get('start', None)
     end_raw = request.args.get('end', None)
 
@@ -85,28 +84,41 @@ def players(slug, user_email=None):
     else:
         end = datetime.datetime(2017, 11, 1)
 
-    for player_point in fantasyslack.models.PlayerPointModel.scan(fantasyslack.models.PlayerPointModel.created.between(start, end)):
-        players[player_point.player][player_point.category.name] += 1
+    player_records = {}
 
-    players = collections.defaultdict(lambda: collections.defaultdict(int))
+    class PlayerRecord:
+        def __init__(self, name, team):
+            self.name = name
+            self.team = team
+            self.points = collections.defaultdict(int)
+
+    # Prepopulate all known players
 
     existing_players = fantasyslack.models.PlayerModel.scan(
-        fantasyslack.models.PlayerModel.slack_team_id == game.slack_team_id
+        (fantasyslack.models.PlayerModel.slack_team_id == game.slack_team_id) &\
+        (fantasyslack.models.PlayerModel.game_id == game.id)
     )
 
     for player in existing_players:
-        players[player] = {}
+        player_records[player.id] = PlayerRecord(player.name, player.current_team.name)
 
-    for player_point in fantasyslack.models.PlayerPointModel.scan(fantasyslack.models.PlayerPointModel.created.between(start, end)):
-        players[player_point.player][player_point.category.name] += 1
+    # Then go through the accumulated points and sum them
+
+    for player_point in fantasyslack.models.PlayerPointModel.scan(
+            fantasyslack.models.PlayerPointModel.created.between(start, end) &\
+            (fantasyslack.models.PlayerPointModel.game_id == game.id)
+        ):
+        if player_point.player_id not in player_records:
+            player_records[player_point.player_id] = PlayerRecord(player.name, player.current_team.name)
+        player_records[player_point.player_id].points[player_point.category.name] += 1
 
     table = [
         {
-            'name': player.name,
-            'points': sum(entry.values()),
-            'team': player.current_team.name,
+            'name': player_record.name,
+            'points': sum(player_record.points.values()),
+            'team': player_record.team,
         }
-        for player, entry in players.items()
+        for player_id, player_record in player_records.items()
     ]
 
     for idx, row in enumerate(sorted(table, key=operator.itemgetter('points'), reverse=True)):

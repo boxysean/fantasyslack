@@ -15,7 +15,7 @@ class GameList extends React.Component {
     return (
       <ul>
         {this.state.games.map(function(game) {
-          return <Link key={game.id} to={"/game/" + game.slug}>{game.name}</Link>
+          return <li key={game.id}><Link to={"/game/" + game.slug}>{game.name}</Link></li>
         })}
       </ul>
     );

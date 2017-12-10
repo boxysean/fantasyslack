@@ -162,7 +162,7 @@ def create_fixtures(args):
             end=datetime.datetime(2017, 12, 1),
             players_per_team=players_per_team,
             draft=draft,
-            admin_user_ids=[admin_user_ids],
+            admin_user_ids=[admin_user_id],
             slack_team_id=slack_team_id,
         )
 
@@ -178,10 +178,10 @@ def _random_datetime(start, end):
 
 def _generate_player_points(game_id, players, categories, teams, start=None, end=None):
     if not start:
-        start = datetime.datetime(2017, 10, 1)
+        start = datetime.datetime(2017, 11, 1)
 
     if not end:
-        end = datetime.datetime(2017, 11, 1)
+        end = datetime.datetime(2017, 12, 1)
 
     player_id_team_map = {
         player_id: team

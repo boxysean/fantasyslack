@@ -20,6 +20,16 @@ class BasePlayersPanel extends React.Component {
     };
   }
 
+  updateTimePeriodDays(days) {
+    console.log('days' + days);
+    this.setState({
+      timePeriodDays: days,
+    }, () => {
+      console.log('rerequest!');
+      this.rerequest();
+    });
+  }
+
   render() {
     if (this.state.data) {
       return (
@@ -28,9 +38,9 @@ class BasePlayersPanel extends React.Component {
           <h3>Time period</h3>
           <ButtonToolbar>
             <ToggleButtonGroup type="radio" name="timePeriodDays" defaultValue={this.state.timePeriodDays}>
-              <ToggleButton value={30}>Last 30 Days</ToggleButton>
-              <ToggleButton value={7}>Last 7 Days</ToggleButton>
-              <ToggleButton value={1}>Last 24 Hours</ToggleButton>
+              <ToggleButton onClick={this.updateTimePeriodDays.bind(this, 30)} value={30}>Last 30 Days</ToggleButton>
+              <ToggleButton onClick={this.updateTimePeriodDays.bind(this, 7)} value={7}>Last 7 Days</ToggleButton>
+              <ToggleButton onClick={this.updateTimePeriodDays.bind(this, 1)} value={1}>Last 24 Hours</ToggleButton>
             </ToggleButtonGroup>
           </ButtonToolbar>
           <i>Data collection began: xyz date</i>
@@ -69,7 +79,7 @@ class BasePlayersPanel extends React.Component {
   }
 
   rerequest() {
-    const jwtConfig = {
+    const requestParams = {
       headers: {
         accessToken: this.props.accessToken,
         idToken: this.props.idToken,
@@ -80,7 +90,7 @@ class BasePlayersPanel extends React.Component {
       }
     };
 
-    axios.get("http://localhost:5000/api/v1/games/" + this.props.game.slug + "/players", jwtConfig)
+    axios.get("http://localhost:5000/api/v1/games/" + this.props.game.slug + "/players", requestParams)
       .then(res => {
         this.setState({
           data: res.data
