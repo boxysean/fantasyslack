@@ -1,4 +1,4 @@
-import { CognitoState, EmailVerification, Login, Logout, NewPasswordRequired } from 'react-cognito';
+import { CognitoState, EmailVerification, Login, NewPasswordRequired } from 'react-cognito';
 import { Link, Redirect } from 'react-router-dom';
 
 import EmailVerificationForm from './EmailVerificationForm';
@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
+// eslint-disable-next-line
 const loggedInPageDebug = (user, attributes) => (
   <div>
     <p>Attributes</p>

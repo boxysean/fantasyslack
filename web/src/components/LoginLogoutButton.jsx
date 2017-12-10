@@ -4,9 +4,8 @@ import { CognitoState, Logout } from 'react-cognito';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-const LogoutButton = ({ onClick }) => (
-  <a href="#" onClick={onClick}>Log out</a>
-);
+// eslint-disable-next-line
+const LogoutButton = ({ onClick }) => <a href="#" onClick={onClick}>Log out</a>;
 LogoutButton.propTypes = {
   onClick: PropTypes.func,
 };

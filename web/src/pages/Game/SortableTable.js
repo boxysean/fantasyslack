@@ -2,9 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Table } from 'react-bootstrap';
 import _ from 'lodash';
-import axios from 'axios';
-import { connect } from 'react-redux';
-import moment from 'moment';
 
 
 class SortableTable extends React.Component {

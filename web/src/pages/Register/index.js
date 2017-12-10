@@ -1,5 +1,4 @@
 import { Panel } from 'react-bootstrap';
-import PropTypes from 'prop-types';
 import React from 'react';
 import RegistrationForm from './RegistrationForm';
 import { withRouter } from 'react-router';

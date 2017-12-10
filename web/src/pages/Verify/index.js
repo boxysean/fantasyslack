@@ -1,6 +1,5 @@
 import { Confirm } from 'react-cognito';
 import { Panel } from 'react-bootstrap';
-import PropTypes from 'prop-types';
 import React from 'react';
 import VerificationForm from './VerificationForm';
 import { withRouter } from 'react-router';

@@ -1,8 +1,6 @@
 import React from 'react';
-import axios from 'axios';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import moment from 'moment';
 
 class Overview extends React.Component {
   static propTypes = {

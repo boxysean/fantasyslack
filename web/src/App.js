@@ -1,6 +1,6 @@
 import './App.css';
 
-import { Link, Redirect, Route, BrowserRouter as Router } from 'react-router-dom';
+import { Link, Route, BrowserRouter as Router } from 'react-router-dom';
 
 import { FSGamePage } from './pages/NewGame';
 import Home from './pages/Home';
@@ -47,8 +47,8 @@ class App extends React.Component {
           <div className="container">
             <Route exact path="/" component={Home} />
             <Route path="/game/:slug" component={Game} />
-            <Route exact path="/register" exact component={Register} />
-            <Route exact path="/verify" exact component={Verify} />
+            <Route exact path="/register" component={Register} />
+            <Route exact path="/verify" component={Verify} />
             <Route exact path="/new-game" component={FSGamePage} />
             <Route exact path="/login" component={Login} />
           </div>
