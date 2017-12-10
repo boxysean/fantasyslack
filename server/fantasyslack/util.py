@@ -57,7 +57,7 @@ def get_game_team_by_user_id(game_id, user_id):
     try:
         return list(fantasyslack.models.TeamModel.scan(
             (fantasyslack.models.TeamModel.game_id == game_id)
-            & (fantasyslack.models.TeamModel.user_id == user_id)
+            & (fantasyslack.models.TeamModel.manager_user_id == user_id)
         ))[0]
     except IndexError:
         return None

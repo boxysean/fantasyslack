@@ -94,7 +94,7 @@ def create_fixtures(args):
     teams = [
         _make_model(fantasyslack.models.TeamModel,
             game_id=game_id,
-            user_id=user.id,
+            manager_user_id=user.id,
             name=team_name,
             current_player_ids=list(itertools.islice(player_ids_iterator, 0, 2)),
             current_points=[],
@@ -133,6 +133,7 @@ def create_fixtures(args):
             name='Fake Pre-game',
             slug='fake-pre-game',
             team_ids=[team.id for team in teams],
+            manager_user_ids=[user.id for user in users],
             category_ids=[category.id for category in categories],
             start=datetime.datetime(2018, 1, 1),
             end=datetime.datetime(2018, 2, 1),
@@ -140,6 +141,7 @@ def create_fixtures(args):
             draft=draft,
             admin_user_ids=[admin_user_id],
             slack_team_id=slack_team_id,
+            channel='#channel',
         )
     else:
         team_order = [team.id for team in teams]
@@ -158,6 +160,7 @@ def create_fixtures(args):
             name='Fake Game',
             slug='fake-game',
             team_ids=[team.id for team in teams],
+            manager_user_ids=[user.id for user in users],
             category_ids=[category.id for category in categories],
             start=datetime.datetime(2017, 11, 1),
             end=datetime.datetime(2017, 12, 1),
@@ -165,6 +168,7 @@ def create_fixtures(args):
             draft=draft,
             admin_user_ids=[admin_user_id],
             slack_team_id=slack_team_id,
+            channel='#channel',
         )
 
         _generate_player_points(game_id, players, categories, teams)

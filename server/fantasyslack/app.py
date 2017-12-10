@@ -168,18 +168,27 @@ def get_game(slug):
     if not game:
         abort(404)
 
+    managers = [
+        {
+            'name': manager.name,
+            'team': fantasyslack.util.get_game_team_by_user_id(game.id, manager.id).name,
+            'role': 'admin' if manager.id in game.admin_user_ids else 'player',
+        }
+        for manager in game.managers
+    ]
+
     return jsonify({
         'name': game.attribute_values['name'],
         'slug': slug,
         'start': game.attribute_values['start'].isoformat(),
         'end': game.attribute_values['end'].isoformat(),
+        'playersPerTeam': game.attribute_values['players_per_team'],
+        'channel': game.attribute_values['channel'],
         'categories': [category.name for category in game.categories],
-        'teams': [team.name for team in game.teams],
+        'managers': managers,
         'categories': fantasyslack.util.score_categories(game),
         'standings': fantasyslack.util.score_game(game),
         'draft': game.attribute_values['draft'].attribute_values,
-        'admins': [fantasyslack.util.get_user_by_id(user_id).name
-                   for user_id in game.attribute_values['admin_user_ids']],
     })
 
 

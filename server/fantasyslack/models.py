@@ -90,6 +90,8 @@ class GameModel(BaseModel):
     name = UnicodeAttribute()
     slug = UnicodeAttribute()
     team_ids = ListAttribute()  # probably doesn't change
+    manager_user_ids = ListAttribute()  # These are users who have signed up,
+                                        # but may not have yet created a team
     category_ids = ListAttribute()  # must not change
     start = UTCDateTimeAttribute()
     end = UTCDateTimeAttribute()
@@ -97,6 +99,7 @@ class GameModel(BaseModel):
     players_per_team = NumberAttribute()
     admin_user_ids = ListAttribute()
     slack_team_id = UnicodeAttribute()
+    channel = UnicodeAttribute()
 
     @property
     def categories(self):
@@ -107,6 +110,11 @@ class GameModel(BaseModel):
     def teams(self):
         return [_from_cache(TeamModel, team_id)
                 for team_id in self.team_ids]
+
+    @property
+    def managers(self):
+        return [_from_cache(UserModel, user_id)
+                for user_id in self.manager_user_ids]
 
     @property
     def has_started(self):
@@ -127,7 +135,7 @@ class TeamModel(BaseModel):
         table_name = 'fantasyslack-teams'
 
     game_id = UnicodeAttribute()
-    user_id = UnicodeAttribute()  # secondary key A
+    manager_user_id = UnicodeAttribute()  # secondary key A
     name = UnicodeAttribute()
     current_player_ids = ListAttribute()
     current_points = ListAttribute(of=TeamPointAttribute)

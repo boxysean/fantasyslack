@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import PlayersPanel from './PlayersPanel';
+import SettingsPanel from './SettingsPanel';
 import Teams from './Teams';
 import Overview from './Overview';
 import { Route } from 'react-router-dom';
@@ -32,7 +33,7 @@ class Game extends React.Component {
           <nav className="navbar navbar-light bg-faded">
             <ul className="nav navbar-nav">
               <li className="nav-item active">
-                <Link className="navbar-brand nav-link" to={match.url}>{match.params.slug}</Link>
+                <Link className="navbar-brand nav-link" to={match.url}>{this.state.game.name}</Link>
               </li>
               <li className="nav-item active">
                 <Link className="nav-link" to={match.url + "/teams"}>Teams</Link>
@@ -42,6 +43,9 @@ class Game extends React.Component {
               </li>
               <li className="nav-item">
                 <Link className="nav-link" to={match.url + "/scoring-plays"}>Scoring Plays</Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to={match.url + "/settings"}>Settings</Link>
               </li>
             </ul>
           </nav>
@@ -55,6 +59,9 @@ class Game extends React.Component {
             } />
             <Route exact path="/game/:slug/players" component={() =>
               <PlayersPanel game={this.state.game} />
+            } />
+            <Route exact path="/game/:slug/settings" component={() =>
+              <SettingsPanel game={this.state.game} />
             } />
           </div>
         </div>
