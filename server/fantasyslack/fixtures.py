@@ -79,6 +79,7 @@ def create_fixtures(args):
             game_id=game_id,
             internal_slack_user_id=slack_user.id,
             slack_team_id=slack_team_id,
+            name=slack_user.name,
         ) for slack_user in slack_users
     ]
 

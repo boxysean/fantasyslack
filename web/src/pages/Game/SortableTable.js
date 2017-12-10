@@ -6,6 +6,7 @@ import axios from 'axios';
 import { connect } from 'react-redux';
 import moment from 'moment';
 
+
 class SortableTable extends React.Component {
   static propTypes = {
     table: PropTypes.array.isRequired,
@@ -45,6 +46,22 @@ class SortableTable extends React.Component {
     return rows;
   }
 
+  makeCell(row, column) {
+    if (!column.cellGenerator) {
+      return (
+        <td key={row.name + "-" + column.key}>
+          {row[column.key]}
+        </td>
+      )
+    } else {
+      return (
+        <td key={row.name + "-" + column.key}>
+          {column.cellGenerator(row[column.key], row.name, column.key)}
+        </td>
+      );
+    }
+  }
+
   render() {
     return (
       <Table striped bordered>
@@ -63,9 +80,7 @@ class SortableTable extends React.Component {
         {
           this.sortRows().map((row) =>
             <tr key={row.name}>
-              {this.props.columnHeaders.map((column) =>
-                <td key={row.name + "-" + column.key}>{row[column.key]}</td>
-              )}
+              {this.props.columnHeaders.map((column) => this.makeCell(row, column))}
             </tr>
           )
         }

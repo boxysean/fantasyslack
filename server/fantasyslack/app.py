@@ -112,17 +112,28 @@ def players(slug, user_email=None):
             player_records[player_point.player_id] = PlayerRecord(player.name, player.current_team.name)
         player_records[player_point.player_id].points[player_point.category.name] += 1
 
+    # Also grab their draft orders for this user
+
+    draft_order = {
+        d.attribute_values['player_id']: d.attribute_values['order']
+        for d in fantasyslack.models.DraftSelectionModel.scan(
+            (fantasyslack.models.DraftSelectionModel.game_id == game.id) &\
+            (fantasyslack.models.DraftSelectionModel.team_id == team.id)
+        )
+    }
+
     table = [
         {
             'name': player_record.name,
             'points': sum(player_record.points.values()),
             'team': player_record.team,
+            'draftOrder': draft_order.get(player_id, None),
         }
         for player_id, player_record in player_records.items()
     ]
 
-    for idx, row in enumerate(sorted(table, key=operator.itemgetter('points'), reverse=True)):
-        row['rank'] = idx+1
+    for idx, row in enumerate(sorted(table, key=operator.itemgetter('points'), reverse=True), 1):
+        row['rank'] = idx
 
     return jsonify({
         'players': table,
@@ -169,6 +180,62 @@ def get_game(slug):
         'draft': game.attribute_values['draft'].attribute_values,
         'admins': [fantasyslack.util.get_user_by_id(user_id).name
                    for user_id in game.attribute_values['admin_user_ids']],
+    })
+
+
+@app.route('/api/v1/games/<game_slug>/teams/<team_slug>', methods=['PUT'])
+@fantasyslack.auth.login_required
+def put_game_team(game_slug, team_slug, user_email=None):
+    game = fantasyslack.util.get_game_by_slug(game_slug)
+
+    if not game:
+        abort(404)
+
+    team = fantasyslack.util.get_game_team_by_slug(game.id, team_slug)
+
+    if not team:
+        abort(404)
+
+    user = fantasyslack.util.get_user_by_email(user_email)
+
+    if not user:
+        abort(403)
+
+    if team.user_id != user.id:
+        abort(403)
+
+    for draft_order_record in request.json['draftOrder']:
+        player = fantasyslack.util.get_game_player_by_name(game.id, draft_order_record['player'])
+
+        # Upsert:
+
+        try:
+            existing_draft_selection = list(fantasyslack.models.DraftSelectionModel.scan(
+                (fantasyslack.models.DraftSelectionModel.game_id == game.id) &\
+                (fantasyslack.models.DraftSelectionModel.team_id == team.id) &\
+                (fantasyslack.models.DraftSelectionModel.player_id == player.id)
+            ))[0]
+
+            if not draft_order_record['order']:
+                existing_draft_selection.delete()
+            else:
+                existing_draft_selection.update({
+                    'order': {
+                        'value': draft_order_record['order'],
+                        'action': 'PUT',
+                    },
+                })
+        except IndexError:
+            if draft_order_record['order']:
+                fantasyslack.models.DraftSelectionModel(
+                    game_id=game.id,
+                    team_id=team.id,
+                    player_id=player.id,
+                    order=draft_order_record['order'],
+                ).save()
+
+    return jsonify({
+        'response': 'ok'
     })
 
 

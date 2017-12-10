@@ -4,6 +4,7 @@ import { ButtonToolbar, ToggleButtonGroup, ToggleButton } from 'react-bootstrap'
 import axios from 'axios';
 import { connect } from 'react-redux';
 import moment from 'moment';
+import _ from 'lodash';
 
 import SortableTable from './SortableTable';
 
@@ -18,14 +19,75 @@ class BasePlayersPanel extends React.Component {
     this.state = {
       timePeriodDays: 30,
     };
+
+    this.columnHeaders = [
+      {
+        title: 'Rank',
+        key: 'rank'
+      },
+      {
+        title: 'Name',
+        key: 'name',
+      },
+      {
+        title: 'Points',
+        key: 'points'
+      },
+      {
+        title: 'Current Team',
+        key: 'team'
+      }
+    ];
+
+    if (!this.props.game.draft.hasStarted) {
+      const updateDraftOrder = _.debounce((player, order) => {
+        const config = {
+          headers: {
+            accessToken: this.props.accessToken,
+            idToken: this.props.idToken,
+          },
+        };
+
+        const data = {
+          'draftOrder': [
+            {
+              'player': player,
+              'order': order,
+            }
+          ]
+        };
+
+        axios.put("http://localhost:5000/api/v1/games/" + this.props.game.slug + "/teams/team-unicorn", data, config)
+          .then(res => {
+            // TODO: fading checkmark ya
+            // TODO: or fading x :(
+          }
+        );
+      }, 500);
+
+      const putIt = (event, rowName, columnKey) => {
+        updateDraftOrder(rowName, _.parseInt(event.target.value));
+      };
+
+      this.columnHeaders.push({
+        title: 'Your Draft Order',
+        key: 'draftOrder',
+        cellGenerator: (value, rowName, columnKey) => {
+          return (
+            <input
+              type="text"
+              defaultValue={value || undefined}
+              onChange={_.partial(putIt, _, rowName, columnKey)} />
+          );
+        },
+      });
+    }
   }
 
   updateTimePeriodDays(days) {
-    console.log('days' + days);
     this.setState({
       timePeriodDays: days,
     }, () => {
-      console.log('rerequest!');
       this.rerequest();
     });
   }
@@ -48,24 +110,7 @@ class BasePlayersPanel extends React.Component {
           <br />
           <SortableTable
             table={this.state.data.players}
-            columnHeaders={[
-              {
-                title: 'Rank',
-                key: 'rank'
-              },
-              {
-                title: 'Name',
-                key: 'name',
-              },
-              {
-                title: 'Points',
-                key: 'points'
-              },
-              {
-                title: 'Current Team',
-                key: 'team'
-              },
-            ]}
+            columnHeaders={this.columnHeaders}
           />
         </div>
       );
@@ -79,6 +124,8 @@ class BasePlayersPanel extends React.Component {
   }
 
   rerequest() {
+    console.log('Rerequest!');
+
     const requestParams = {
       headers: {
         accessToken: this.props.accessToken,

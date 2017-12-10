@@ -1,6 +1,7 @@
 import collections
 import math
 import operator
+import slugify
 
 import fantasyslack.models
 
@@ -44,11 +45,29 @@ def get_game_by_slug(slug):
         return None
 
 
+def get_game_team_by_slug(game_id, slug):
+    for team in fantasyslack.models.TeamModel.scan(fantasyslack.models.TeamModel.game_id == game_id):
+        if slugify.slugify(team.name) == slug:
+            return team
+    else:
+        return None
+
+
 def get_game_team_by_user_id(game_id, user_id):
     try:
         return list(fantasyslack.models.TeamModel.scan(
             (fantasyslack.models.TeamModel.game_id == game_id)
             & (fantasyslack.models.TeamModel.user_id == user_id)
+        ))[0]
+    except IndexError:
+        return None
+
+
+def get_game_player_by_name(game_id, player_name):
+    try:
+        return list(fantasyslack.models.PlayerModel.scan(
+            (fantasyslack.models.PlayerModel.game_id == game_id)
+            & (fantasyslack.models.PlayerModel.name == player_name)
         ))[0]
     except IndexError:
         return None

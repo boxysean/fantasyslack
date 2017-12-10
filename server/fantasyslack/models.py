@@ -162,7 +162,7 @@ class TransactionModel(BaseModel):
 class PlayerModel(BaseModel):
     """
     This is a user in the context of a Fantasy Slack game. A Player is owned by
-    a Fantasy Slack User.
+    a Fantasy Slack Team.
     """
     class Meta(BaseMeta):
         table_name = 'fantasyslack-players'
@@ -170,10 +170,7 @@ class PlayerModel(BaseModel):
     game_id = UnicodeAttribute()
     internal_slack_user_id = UnicodeAttribute()
     slack_team_id = UnicodeAttribute()  # Useful duplicate
-
-    @property
-    def name(self):
-        return _from_cache(InternalSlackUserModel, self.internal_slack_user_id).name
+    name = UnicodeAttribute()  # Useful duplicate
 
     @property
     def current_team(self):
@@ -218,13 +215,18 @@ class CategoryModel(BaseModel):
 
 
 class DraftSelectionModel(BaseModel):
+    """
+    I think this is a clear example of key being:
+        (game, team) with sort key player
+    Easy scans
+    """
     class Meta(BaseMeta):
         table_name = 'fantasyslack-draftselections'
 
     game_id = UnicodeAttribute()
     team_id = UnicodeAttribute()
     player_id = UnicodeAttribute()
-    order = NumberAttribute()
+    order = NumberAttribute(null=True)
 
 
 class UserModel(BaseModel):
