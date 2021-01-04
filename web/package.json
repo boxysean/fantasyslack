@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "amazon-cognito-identity-js": "^1.26.0",
-    "axios": "^0.17.0",
+    "axios": "^0.21.1",
     "bootstrap": "^3.3.7",
     "lodash": "^4.17.4",
     "moment": "^2.19.3",
