@@ -46,7 +46,7 @@ python-jose==1.4.0
 python-slugify==1.2.4
 PyYAML==3.12
 requests==2.18.4
-rsa==3.4.2
+rsa==4.1
 s3transfer==0.1.11
 simplegeneric==0.8.1
 six==1.11.0
